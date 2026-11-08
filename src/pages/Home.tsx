@@ -5,6 +5,7 @@ import { ASSEMBLIES } from '../three/assemblies'
 import { VEHICLES } from '../data/vehicles'
 import { PROCEDURES, totalSteps } from '../data/procedures'
 import { LEVELS, TOTAL_EXAM_QUESTIONS } from '../data/curriculum'
+import { CASES } from '../data/diagnostics'
 import { SYSTEMS, type SystemId } from '../lib/types'
 import { Chip, SectionTitle, SpecNotice } from '../components/ui'
 
@@ -213,6 +214,48 @@ export function Home() {
               </div>
             </Link>
           ))}
+        </div>
+      </div>
+
+      {/* -------------------------------------------------- diagnostic bay */}
+      <div className="mt-16">
+        <SectionTitle sub="Procedures teach you how to do the job. The bay teaches you whether it is the job — the half of trade school that nobody films.">
+          The diagnostic bay
+        </SectionTitle>
+        <div className="grid gap-3 lg:grid-cols-[1.1fr_1fr]">
+          <div className="rounded-xl border border-shop-800 bg-shop-900/30 p-5">
+            <p className="text-[13.5px] leading-relaxed text-shop-300">
+              Each case opens the way a job opens: a customer describing a symptom and guessing at the cause. You
+              choose what to check and in what order. Every decision costs time, and some of them put parts on the
+              car that were never at fault — the running total sits at the top of the screen while you work.
+            </p>
+            <p className="mt-3 text-[13.5px] leading-relaxed text-shop-300">
+              You can always reach the answer. What gets scored is what the diagnosis cost, measured against the
+              time the same case takes when every move is the right one.
+            </p>
+            <Link
+              to="/diagnose"
+              className="mt-4 inline-block rounded-md border border-amber-caution/50 bg-amber-caution/10 px-4 py-2 text-[13.5px] font-medium text-amber-caution transition-colors hover:bg-amber-caution/20"
+            >
+              Open the bay — {CASES.length} cases →
+            </Link>
+          </div>
+
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            {CASES.slice(0, 4).map((c) => (
+              <Link
+                key={c.id}
+                to={`/diagnose/${c.id}`}
+                className="group rounded-lg border border-shop-800 bg-shop-900/30 p-4 transition-colors hover:border-amber-caution/40 hover:bg-shop-850"
+              >
+                <div className="font-mono text-[10px] tracking-widest text-amber-caution uppercase">
+                  {SYSTEMS[c.system].label}
+                </div>
+                <h3 className="mt-0.5 text-[14px] leading-snug font-semibold text-shop-100">{c.title}</h3>
+                <p className="mt-2 line-clamp-3 text-[12px] leading-relaxed text-shop-500 italic">{c.complaint}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 

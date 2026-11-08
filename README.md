@@ -55,7 +55,7 @@ src/
     Viewer.tsx        Canvas, lights, camera tween, explode driver, callouts
   components/         UI atoms, toolbar, part inspector, quiz
   pages/              Home, Garage, VehicleDetail, Library, Bench, Runner,
-                      Path, Exam
+                      Path, Exam, Diagnose
 ```
 
 ### The three ideas that make it work
@@ -132,6 +132,44 @@ Passing all four levels produces a completion record with an optional name,
 printable from the path page. It is a record of study on a training platform,
 and the app says so on the record itself.
 
+---
+
+## The diagnostic bay
+
+`src/data/diagnostics.ts` is the other half of the training. Every procedure
+answers *how do I do this job*; none of them answers *is this the job*, which
+is the half of trade school nobody films and the reason so many home repairs
+are a correct procedure performed on an innocent part.
+
+A case opens with a customer describing a symptom and guessing at the cause.
+Each decision costs time, and some of them put parts on the car that were never
+at fault:
+
+```ts
+{
+  text: 'Fit a new pair of front tyres — cupped tyres make exactly this noise',
+  costMin: 45,
+  costParts: 420,
+  why: 'Cupped tyres genuinely do make this noise, and tyre roar is the most
+        common misdiagnosis of a wheel bearing. But these tyres are not cupped,
+        and you have not ruled anything in yet.',
+}
+```
+
+You can always reach the answer — a wrong move reveals why it was wrong and
+leaves the decision open. What gets scored is the cost of getting there, against
+a benchmark computed as the sum of the right moves (`bookTime`), so a clean run
+is always achievable and a guessed run is visibly expensive. Each case ends in a
+verdict and a link to the procedure that actually fixes it.
+
+Options are shuffled like the exams, but the seed shape matters more than it
+looks. A seeded permutation spreads answers; over a set this small it does not
+guarantee an *even* spread. The obvious `case:stage` seed put 8 of the 18 right
+answers at position A, so clicking the top option would have worked 44% of the
+time. `stage@case` lands on 5/5/5/3, which is about as close to uniform as 18
+decisions get. If you add cases, count where the right answers land before you
+assume the shuffle has handled it.
+
 ## Extending it
 
 **Add a procedure** — create `src/data/procedures/myProcedure.ts` exporting a
@@ -175,6 +213,12 @@ Two things in the 3D are deliberate simplifications worth knowing about:
 - Assemblies are laid out for legibility, not packaging. Nothing is fighting
   for space the way it does on a real car, which is the point — you learn the
   relationships here and the contortions in the driveway.
+
+Six diagnostic cases sit alongside them, one per system where the fault is
+genuinely mistakable: a pulsating pedal that is not warped rotors, a growl that
+is not where it sounds, a misfire that is not the coil, a dragging brake that
+is not the caliper, an overheat that is not the thermostat, and a clicking
+joint that is really a split boot.
 
 All torque figures, clearances and discard specs are **training reference
 values**, chosen to teach which fasteners matter and in what order. They are

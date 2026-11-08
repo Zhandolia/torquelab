@@ -7,6 +7,7 @@ const LINKS = [
   { to: '/path', label: 'Path' },
   { to: '/garage', label: 'Garage' },
   { to: '/library', label: 'Procedures' },
+  { to: '/diagnose', label: 'Diagnose' },
   { to: '/bench', label: 'Bench' },
 ]
 
@@ -47,7 +48,9 @@ export function Nav() {
           </span>
         </Link>
 
-        <nav className="flex min-w-0 items-center gap-0.5 sm:gap-1">
+        {/* five links do not fit on a 375px phone, so the rail scrolls rather
+            than silently clipping whichever one falls off the end */}
+        <nav className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto [scrollbar-width:none] sm:gap-1 [&::-webkit-scrollbar]:hidden">
           {LINKS.map((l) => (
             <NavLink
               key={l.to}

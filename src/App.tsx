@@ -7,6 +7,7 @@ import { Library, Bench } from './pages/Library'
 import { Runner } from './pages/Runner'
 import { Path } from './pages/Path'
 import { Exam } from './pages/Exam'
+import { DiagnosticBay, DiagnosticCase } from './pages/Diagnose'
 
 function ScrollTop() {
   const { pathname } = useLocation()
@@ -19,6 +20,7 @@ function ScrollTop() {
 function Footer() {
   const { pathname } = useLocation()
   if (pathname.startsWith('/procedure/')) return null
+  if (/^\/diagnose\/.+/.test(pathname)) return null
   return (
     <footer className="mt-16 border-t border-shop-800 px-5 py-8">
       <div className="mx-auto max-w-[1500px] text-[11.5px] leading-relaxed text-shop-600">
@@ -51,6 +53,8 @@ export default function App() {
             <Route path="/path/:levelId/exam" element={<Exam />} />
             <Route path="/garage" element={<Garage />} />
             <Route path="/vehicle/:id" element={<VehicleDetail />} />
+            <Route path="/diagnose" element={<DiagnosticBay />} />
+            <Route path="/diagnose/:id" element={<DiagnosticCase />} />
             <Route path="/library" element={<Library />} />
             <Route path="/bench" element={<Bench />} />
             <Route path="/procedure/:id" element={<Runner />} />

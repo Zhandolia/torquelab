@@ -27,12 +27,22 @@ export interface ExamResult {
   lastAt: number
 }
 
+export interface DiagResult {
+  attempts: number
+  solvedAt?: number
+  /** fewest minutes any attempt took to reach the fault */
+  bestMin?: number
+  /** least money any attempt spent on parts that were not the fault */
+  bestParts?: number
+}
+
 interface State {
   progress: Record<string, ProcProgress>
   bookmarks: string[]
   viewer: ViewerPrefs
   unitFtLb: boolean
   exams: Record<string, ExamResult>
+  diagnostics: Record<string, DiagResult>
   learnerName: string
   toggleStep: (proc: string, step: string) => void
   completeStep: (proc: string, step: string) => void
@@ -44,6 +54,8 @@ interface State {
   setUnit: (ftlb: boolean) => void
   submitExam: (level: string, answers: Record<string, number>, score: number, passMark: number) => void
   clearExam: (level: string) => void
+  recordDiagnosis: (caseId: string, min: number, parts: number) => void
+  clearDiagnosis: (caseId: string) => void
   setLearnerName: (name: string) => void
 }
 
@@ -57,6 +69,7 @@ export const useStore = create<State>()(
       viewer: { labels: true, ghost: true, autoRotate: false, xray: false, grid: true },
       unitFtLb: true,
       exams: {},
+      diagnostics: {},
       learnerName: '',
 
       toggleStep: (proc, step) =>
@@ -125,6 +138,29 @@ export const useStore = create<State>()(
           const next = { ...s.exams }
           delete next[level]
           return { exams: next }
+        }),
+
+      recordDiagnosis: (caseId, min, parts) =>
+        set((s) => {
+          const prev = s.diagnostics[caseId]
+          return {
+            diagnostics: {
+              ...s.diagnostics,
+              [caseId]: {
+                attempts: (prev?.attempts ?? 0) + 1,
+                solvedAt: prev?.solvedAt ?? Date.now(),
+                bestMin: Math.min(prev?.bestMin ?? Infinity, min),
+                bestParts: Math.min(prev?.bestParts ?? Infinity, parts),
+              },
+            },
+          }
+        }),
+
+      clearDiagnosis: (caseId) =>
+        set((s) => {
+          const next = { ...s.diagnostics }
+          delete next[caseId]
+          return { diagnostics: next }
         }),
 
       setLearnerName: (name) => set({ learnerName: name.slice(0, 60) }),

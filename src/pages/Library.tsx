@@ -5,6 +5,7 @@ import { VEHICLES, vehicleById } from '../data/vehicles'
 import { SYSTEMS, type SystemId } from '../lib/types'
 import { useStore } from '../lib/store'
 import { checkpointOptions, levelStatuses, programProgress } from '../lib/path'
+import { bayProgress, caseStatuses, money } from '../lib/diagnose'
 import { Chip, Difficulty, fmtDuration, ProgressRing, SectionTitle, SpecNotice } from '../components/ui'
 
 type Sort = 'suggested' | 'easiest' | 'hardest' | 'shortest'
@@ -150,8 +151,11 @@ export function Bench() {
   const progress = useStore((s) => s.progress)
   const bookmarks = useStore((s) => s.bookmarks)
   const exams = useStore((s) => s.exams)
+  const diagnostics = useStore((s) => s.diagnostics)
   const statuses = levelStatuses(progress, exams)
   const prog = programProgress(statuses)
+  const cases = caseStatuses(diagnostics)
+  const bay = bayProgress(cases)
 
   const started = PROCEDURES.filter((p) => progress[p.id] && !progress[p.id].completedAt)
   const done = PROCEDURES.filter((p) => progress[p.id]?.completedAt)
@@ -254,6 +258,54 @@ export function Bench() {
               <div className="mt-1 text-[10.5px] text-shop-500">
                 {s.done}/{s.total} done
                 {s.attempts > 0 && <span className="tnum"> · best {s.best}%</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Link>
+
+      {/* --------------------------------------------------- diagnostic bay */}
+      <Link
+        to="/diagnose"
+        className="mb-8 block rounded-lg border border-shop-800 bg-shop-900/30 p-4 transition-colors hover:border-shop-600 hover:bg-shop-850/50"
+      >
+        <div className="mb-3 flex items-center gap-3">
+          <ProgressRing pct={bay.pct} size={34} />
+          <div className="min-w-0 flex-1">
+            <div className="text-[13.5px] font-medium text-shop-100">
+              {bay.complete ? 'Diagnostic bay cleared' : 'Diagnostic bay'}
+            </div>
+            <div className="text-[11.5px] text-shop-500">
+              {bay.solved}/{bay.total} cases solved · {bay.clean} of them clean
+            </div>
+          </div>
+          <span className="text-[12px] text-amber-caution">Open →</span>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {cases.map((s) => (
+            <div key={s.c.id} className="rounded border border-shop-800 bg-shop-950/40 px-2.5 py-2">
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`grid h-4 w-4 place-items-center rounded-full border font-mono text-[9px] ${
+                    s.clean
+                      ? 'border-safe text-safe'
+                      : s.solved
+                        ? 'border-torque text-torque'
+                        : 'border-shop-600 text-shop-500'
+                  }`}
+                >
+                  {s.solved ? '✓' : '?'}
+                </span>
+                <span className="truncate text-[11.5px] text-shop-300">{s.c.title}</span>
+              </div>
+              <div className="mt-1 text-[10.5px] text-shop-500">
+                {s.solved && s.bestMin !== undefined ? (
+                  <span className="tnum">
+                    best {fmtDuration(s.bestMin)} · {money(s.bestParts ?? 0)} wasted
+                  </span>
+                ) : (
+                  <span className="tnum">book {fmtDuration(s.book)}</span>
+                )}
               </div>
             </div>
           ))}
