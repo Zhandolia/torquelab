@@ -16,11 +16,24 @@ interface ViewerPrefs {
   grid: boolean
 }
 
+export interface ExamResult {
+  /** best score as a whole percentage */
+  best: number
+  attempts: number
+  passedAt?: number
+  /** the most recent attempt, kept so results can be reviewed */
+  lastAnswers: Record<string, number>
+  lastScore: number
+  lastAt: number
+}
+
 interface State {
   progress: Record<string, ProcProgress>
   bookmarks: string[]
   viewer: ViewerPrefs
   unitFtLb: boolean
+  exams: Record<string, ExamResult>
+  learnerName: string
   toggleStep: (proc: string, step: string) => void
   completeStep: (proc: string, step: string) => void
   answerQuiz: (proc: string, cp: string, idx: number) => void
@@ -29,6 +42,9 @@ interface State {
   toggleBookmark: (proc: string) => void
   setViewer: (p: Partial<ViewerPrefs>) => void
   setUnit: (ftlb: boolean) => void
+  submitExam: (level: string, answers: Record<string, number>, score: number, passMark: number) => void
+  clearExam: (level: string) => void
+  setLearnerName: (name: string) => void
 }
 
 const blank = (): ProcProgress => ({ steps: [], quiz: {}, startedAt: Date.now() })
@@ -40,6 +56,8 @@ export const useStore = create<State>()(
       bookmarks: [],
       viewer: { labels: true, ghost: true, autoRotate: false, xray: false, grid: true },
       unitFtLb: true,
+      exams: {},
+      learnerName: '',
 
       toggleStep: (proc, step) =>
         set((s) => {
@@ -81,6 +99,35 @@ export const useStore = create<State>()(
 
       setViewer: (p) => set((s) => ({ viewer: { ...s.viewer, ...p } })),
       setUnit: (ftlb) => set({ unitFtLb: ftlb }),
+
+      submitExam: (level, answers, score, passMark) =>
+        set((s) => {
+          const prev = s.exams[level]
+          const now = Date.now()
+          return {
+            exams: {
+              ...s.exams,
+              [level]: {
+                best: Math.max(prev?.best ?? 0, score),
+                attempts: (prev?.attempts ?? 0) + 1,
+                // the first pass is the one that counts, so never overwrite it
+                passedAt: prev?.passedAt ?? (score >= passMark ? now : undefined),
+                lastAnswers: answers,
+                lastScore: score,
+                lastAt: now,
+              },
+            },
+          }
+        }),
+
+      clearExam: (level) =>
+        set((s) => {
+          const next = { ...s.exams }
+          delete next[level]
+          return { exams: next }
+        }),
+
+      setLearnerName: (name) => set({ learnerName: name.slice(0, 60) }),
     }),
     { name: 'torquelab.v1' },
   ),

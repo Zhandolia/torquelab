@@ -4,9 +4,10 @@ import { PROCEDURES } from '../data/procedures'
 import { UnitToggle } from './ui'
 
 const LINKS = [
+  { to: '/path', label: 'Path' },
   { to: '/garage', label: 'Garage' },
   { to: '/library', label: 'Procedures' },
-  { to: '/bench', label: 'My Bench' },
+  { to: '/bench', label: 'Bench' },
 ]
 
 export function Mark() {

@@ -99,6 +99,38 @@ global and persists.
 
 ---
 
+## The learning path
+
+`src/data/curriculum.ts` groups the procedures into four levels ordered by
+consequence rather than by system — you start where a mistake costs an
+afternoon and finish where it costs a cylinder head. Each level ends in an
+assessment that draws across its procedures and tests reasoning rather than
+recall.
+
+```
+1  Shop Foundations    Pre-ASE      4 procedures,  8 questions, pass 75%
+2  Brake Systems       ASE A5       2 procedures,  8 questions, pass 75%
+3  Chassis & Driveline ASE A2/A3/A4 3 procedures,  8 questions, pass 75%
+4  Engine Mechanical   ASE A1       4 procedures, 10 questions, pass 80%
+```
+
+Gating is deliberate: an exam unlocks when every procedure in its level is
+finished **and** the previous level has been passed. Procedures themselves are
+never locked — anyone can read ahead from the library. The path gates
+certification, not learning.
+
+**Question options are shuffled before display** (`src/lib/shuffle.ts`).
+Questions are authored with the correct answer first because that is far
+easier to write and review, which would otherwise let anyone pass by always
+picking A. The shuffle is seeded from the question id so it is stable across
+renders, sessions and devices — answers are stored as indices, so a random
+shuffle would invalidate every saved result on the next render. The same
+treatment applies to the checkpoints inside each procedure.
+
+Passing all four levels produces a completion record with an optional name,
+printable from the path page. It is a record of study on a training platform,
+and the app says so on the record itself.
+
 ## Extending it
 
 **Add a procedure** — create `src/data/procedures/myProcedure.ts` exporting a

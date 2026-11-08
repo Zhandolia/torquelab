@@ -5,6 +5,8 @@ import { Home } from './pages/Home'
 import { Garage, VehicleDetail } from './pages/Garage'
 import { Library, Bench } from './pages/Library'
 import { Runner } from './pages/Runner'
+import { Path } from './pages/Path'
+import { Exam } from './pages/Exam'
 
 function ScrollTop() {
   const { pathname } = useLocation()
@@ -45,6 +47,8 @@ export default function App() {
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/path" element={<Path />} />
+            <Route path="/path/:levelId/exam" element={<Exam />} />
             <Route path="/garage" element={<Garage />} />
             <Route path="/vehicle/:id" element={<VehicleDetail />} />
             <Route path="/library" element={<Library />} />

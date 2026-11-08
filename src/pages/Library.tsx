@@ -4,6 +4,7 @@ import { PROCEDURES } from '../data/procedures'
 import { VEHICLES, vehicleById } from '../data/vehicles'
 import { SYSTEMS, type SystemId } from '../lib/types'
 import { useStore } from '../lib/store'
+import { checkpointOptions, levelStatuses, programProgress } from '../lib/path'
 import { Chip, Difficulty, fmtDuration, ProgressRing, SectionTitle, SpecNotice } from '../components/ui'
 
 type Sort = 'suggested' | 'easiest' | 'hardest' | 'shortest'
@@ -148,6 +149,9 @@ export function Library() {
 export function Bench() {
   const progress = useStore((s) => s.progress)
   const bookmarks = useStore((s) => s.bookmarks)
+  const exams = useStore((s) => s.exams)
+  const statuses = levelStatuses(progress, exams)
+  const prog = programProgress(statuses)
 
   const started = PROCEDURES.filter((p) => progress[p.id] && !progress[p.id].completedAt)
   const done = PROCEDURES.filter((p) => progress[p.id]?.completedAt)
@@ -160,7 +164,7 @@ export function Bench() {
       n +
       p.checkpoints.filter((c) => {
         const picked = q[c.id]
-        return picked !== undefined && c.options[picked]?.correct
+        return picked !== undefined && checkpointOptions(c)[picked]?.correct
       }).length
     )
   }, 0)
@@ -202,12 +206,12 @@ export function Bench() {
         My bench
       </SectionTitle>
 
-      <div className="mb-8 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         {[
           { n: String(done.length), l: 'Procedures finished' },
           { n: String(started.length), l: 'In progress' },
           { n: `${quizRight}/${quizTotal}`, l: 'Checkpoints correct' },
-          { n: String(saved.length), l: 'Saved' },
+          { n: `${prog.examsPassed}/${prog.examTotal}`, l: 'Level exams passed' },
         ].map((s) => (
           <div key={s.l} className="rounded-lg border border-shop-800 bg-shop-900/40 px-4 py-3">
             <div className="tnum font-mono text-[20px] leading-none font-bold text-amber-caution">{s.n}</div>
@@ -215,6 +219,46 @@ export function Bench() {
           </div>
         ))}
       </div>
+
+      {/* ------------------------------------------------------ level standing */}
+      <Link
+        to="/path"
+        className="mb-8 block rounded-lg border border-shop-800 bg-shop-900/30 p-4 transition-colors hover:border-shop-600 hover:bg-shop-850/50"
+      >
+        <div className="mb-3 flex items-center gap-3">
+          <ProgressRing pct={prog.pct} size={34} />
+          <div className="min-w-0 flex-1">
+            <div className="text-[13.5px] font-medium text-shop-100">
+              {prog.complete ? 'Learning path complete' : 'Learning path'}
+            </div>
+            <div className="text-[11.5px] text-shop-500">
+              {prog.pct}% overall · {prog.procDoneCount}/{prog.procTotal} procedures,{' '}
+              {prog.examsPassed}/{prog.examTotal} exams
+            </div>
+          </div>
+          <span className="text-[12px] text-amber-caution">Open →</span>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-4">
+          {statuses.map((s) => (
+            <div key={s.level.id} className="rounded border border-shop-800 bg-shop-950/40 px-2.5 py-2">
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`grid h-4 w-4 place-items-center rounded-full border font-mono text-[9px] ${
+                    s.passed ? 'border-safe text-safe' : 'border-shop-600 text-shop-500'
+                  }`}
+                >
+                  {s.passed ? '✓' : s.level.index}
+                </span>
+                <span className="truncate text-[11.5px] text-shop-300">{s.level.title}</span>
+              </div>
+              <div className="mt-1 text-[10.5px] text-shop-500">
+                {s.done}/{s.total} done
+                {s.attempts > 0 && <span className="tnum"> · best {s.best}%</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Link>
 
       <div className="space-y-8">
         <div>

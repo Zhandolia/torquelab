@@ -4,8 +4,9 @@ import { Viewer } from '../three/Viewer'
 import { ASSEMBLIES } from '../three/assemblies'
 import { VEHICLES } from '../data/vehicles'
 import { PROCEDURES, totalSteps } from '../data/procedures'
+import { LEVELS, TOTAL_EXAM_QUESTIONS } from '../data/curriculum'
 import { SYSTEMS, type SystemId } from '../lib/types'
-import { Chip, Difficulty, SectionTitle, SpecNotice } from '../components/ui'
+import { Chip, SectionTitle, SpecNotice } from '../components/ui'
 
 const HERO: { id: string; label: string; hidden: string[] }[] = [
   {
@@ -98,24 +99,25 @@ export function Home() {
 
           <div className="mt-6 flex flex-wrap gap-2.5">
             <Link
-              to="/library"
+              to="/path"
               className="rounded-md bg-amber-caution px-5 py-2.5 text-[14px] font-semibold text-black transition-colors hover:bg-amber-caution/85"
             >
-              Start with brakes →
+              Start the learning path →
             </Link>
             <Link
-              to="/garage"
+              to="/library"
               className="rounded-md border border-shop-600 px-5 py-2.5 text-[14px] font-medium text-shop-200 transition-colors hover:bg-shop-850"
             >
-              See the training fleet
+              Browse procedures
             </Link>
           </div>
 
-          <div className="mt-7 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <div className="mt-7 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
             <Stat n={String(PROCEDURES.length)} label="Full procedures" />
             <Stat n={String(totalSteps)} label="Guided steps" />
-            <Stat n={String(VEHICLES.length)} label="Training vehicles" />
             <Stat n={String(Object.keys(ASSEMBLIES).length)} label="3D assemblies" />
+            <Stat n={String(VEHICLES.length)} label="Training vehicles" />
+            <Stat n={String(TOTAL_EXAM_QUESTIONS)} label="Exam questions" />
           </div>
         </div>
 
@@ -180,28 +182,35 @@ export function Home() {
         </div>
       </div>
 
-      {/* ------------------------------------------------------------ start here */}
+      {/* ------------------------------------------------------------ the path */}
       <div className="mt-16">
-        <SectionTitle sub="Start at the top if you are new. The list is ordered by how much it costs you to get it wrong.">
-          Suggested order
+        <SectionTitle sub="Four levels, ordered by consequence rather than by system. Each one ends in an assessment that draws across its procedures.">
+          The learning path
         </SectionTitle>
-        <div className="divide-y divide-shop-800 overflow-hidden rounded-lg border border-shop-800">
-          {PROCEDURES.map((p, i) => (
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {LEVELS.map((l) => (
             <Link
-              key={p.id}
-              to={`/procedure/${p.id}`}
-              className="flex items-center gap-4 bg-shop-900/20 px-4 py-3 transition-colors hover:bg-shop-850"
+              key={l.id}
+              to="/path"
+              className="group flex flex-col rounded-xl border border-shop-800 bg-shop-900/30 p-4 transition-colors hover:border-shop-600 hover:bg-shop-850/60"
             >
-              <span className="tnum w-6 font-mono text-[12px] text-shop-600">{String(i + 1).padStart(2, '0')}</span>
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-[14px] font-medium text-shop-100">{p.title}</div>
-                <div className="truncate text-[12px] text-shop-500">{p.subtitle}</div>
+              <div className="flex items-center gap-2.5">
+                <span
+                  className="grid h-8 w-8 shrink-0 place-items-center rounded-full border-2 font-mono text-[13px] font-bold"
+                  style={{ borderColor: l.accent, color: l.accent }}
+                >
+                  {l.index}
+                </span>
+                <div className="min-w-0">
+                  <div className="truncate text-[14.5px] font-semibold text-shop-100">{l.title}</div>
+                  <div className="font-mono text-[10px] tracking-widest text-shop-500 uppercase">{l.ase}</div>
+                </div>
               </div>
-              <div className="hidden shrink-0 sm:block">
-                <Difficulty level={p.difficulty} />
+              <p className="mt-3 flex-1 text-[12.5px] leading-relaxed text-shop-400">{l.subtitle}</p>
+              <div className="mt-3 flex items-center justify-between border-t border-shop-800 pt-2.5 font-mono text-[11px] text-shop-500">
+                <span>{l.procedureIds.length} procedures</span>
+                <span className="group-hover:text-amber-caution">{l.questions.length} exam Qs →</span>
               </div>
-              <span className="shrink-0 font-mono text-[11px] text-shop-500">{p.steps.length} steps</span>
-              <span className="text-shop-600">→</span>
             </Link>
           ))}
         </div>

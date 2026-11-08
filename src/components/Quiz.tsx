@@ -1,11 +1,13 @@
 import type { Checkpoint } from '../lib/types'
 import { useStore } from '../lib/store'
+import { checkpointOptions } from '../lib/path'
 
 export function Quiz({ cp, procId }: { cp: Checkpoint; procId: string }) {
   const answered = useStore((s) => s.progress[procId]?.quiz?.[cp.id])
   const answer = useStore((s) => s.answerQuiz)
   const picked = answered ?? null
-  const correctIdx = cp.options.findIndex((o) => o.correct)
+  const options = checkpointOptions(cp)
+  const correctIdx = options.findIndex((o) => o.correct)
   const gotIt = picked !== null && picked === correctIdx
 
   return (
@@ -28,7 +30,7 @@ export function Quiz({ cp, procId }: { cp: Checkpoint; procId: string }) {
       <p className="mb-3 text-[13.5px] leading-relaxed font-medium text-shop-100">{cp.question}</p>
 
       <div className="space-y-1.5">
-        {cp.options.map((o, i) => {
+        {options.map((o, i) => {
           const isPicked = picked === i
           const reveal = picked !== null
           const state = !reveal
