@@ -9,6 +9,7 @@ const LINKS = [
   { to: '/library', label: 'Procedures' },
   { to: '/diagnose', label: 'Diagnose' },
   { to: '/measure', label: 'Measure' },
+  { to: '/torque', label: 'Torque' },
   { to: '/bench', label: 'Bench' },
 ]
 

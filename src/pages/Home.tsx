@@ -8,6 +8,8 @@ import { LEVELS, TOTAL_EXAM_QUESTIONS } from '../data/curriculum'
 import { CASES } from '../data/diagnostics'
 import { INSTRUMENTS } from '../data/instruments'
 import { Micrometer } from '../components/instruments'
+import { GRADES } from '../data/fasteners'
+import { BoltHead } from '../components/fastenerViz'
 import { SYSTEMS, type SystemId } from '../lib/types'
 import { Chip, SectionTitle, SpecNotice } from '../components/ui'
 
@@ -219,10 +221,10 @@ export function Home() {
         </div>
       </div>
 
-      {/* ------------------------------------------------ measurement bench */}
+      {/* ------------------------------------------------------ shop skills */}
       <div className="mt-16">
-        <SectionTitle sub="Every procedure here hands you a limit in hundredths of a millimetre. The bench teaches the instrument that reads it.">
-          The measurement bench
+        <SectionTitle sub="The two things every procedure here quietly assumes you can already do: read an instrument to a hundredth of a millimetre, and understand what a torque figure is actually buying.">
+          Shop skills
         </SectionTitle>
         <Link
           to="/measure"
@@ -251,6 +253,38 @@ export function Home() {
           </div>
           <div className="overflow-hidden rounded-lg border border-shop-800 bg-shop-950 px-3 py-4">
             <Micrometer value={21.37} />
+          </div>
+        </Link>
+
+        <Link
+          to="/torque"
+          className="group mt-3 grid gap-5 rounded-xl border border-shop-800 bg-shop-900/30 p-5 transition-colors hover:border-amber-caution/40 hover:bg-shop-850/60 lg:grid-cols-[1fr_1.15fr] lg:items-center"
+        >
+          <div>
+            <p className="text-[13.5px] leading-relaxed text-shop-300">
+              Torque is not the point — clamp load is, and torque is a cheap, noisy way of guessing at it. About
+              nine tenths of what you put into a wrench is eaten by friction, which is why oiling a thread and
+              keeping the same reading can push a bolt past its yield point while the wrench still clicks on
+              cue. Pick a fastener from these procedures, change the thread condition, and watch the gauge move.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {['Clamp load simulator', 'Torque-to-yield', 'Grade markings', 'Every spec in one table'].map((t) => (
+                <span key={t} className="rounded border border-shop-700 bg-shop-850 px-2.5 py-1 text-[12px] text-shop-300">
+                  {t}
+                </span>
+              ))}
+            </div>
+            <span className="mt-4 inline-block text-[13.5px] font-medium text-amber-caution">
+              Open fasteners & torque →
+            </span>
+          </div>
+          <div className="flex items-center justify-center gap-4 rounded-lg border border-shop-800 bg-shop-950 px-3 py-5">
+            {GRADES.slice(0, 3).map((g) => (
+              <div key={g.id} className="text-center">
+                <BoltHead grade={g} size={72} />
+                <div className="font-mono text-[10.5px] text-shop-500">{g.proofMPa} MPa</div>
+              </div>
+            ))}
           </div>
         </Link>
       </div>

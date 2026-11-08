@@ -55,7 +55,7 @@ src/
     Viewer.tsx        Canvas, lights, camera tween, explode driver, callouts
   components/         UI atoms, toolbar, part inspector, quiz
   pages/              Home, Garage, VehicleDetail, Library, Bench, Runner,
-                      Path, Exam, Diagnose, Measure
+                      Path, Exam, Diagnose, Measure, Torque
 ```
 
 ### The three ideas that make it work
@@ -205,6 +205,48 @@ decoration:
 - On a phone the two long scales **scroll sideways inside their panel** rather
   than shrinking. Squeezed to a 375 px screen the thimble divisions came out at
   three pixels, which is not a reading surface, it is a picture of one.
+
+---
+
+## Fasteners & torque
+
+Every procedure here quotes torque figures and several stop to explain why one
+bolt on a caliper is 136 N·m and the one beside it is 32. What none of them
+says out loud is the thing underneath all of it: **torque is not the point.
+Clamp load is the point, and torque is a cheap, noisy way of guessing at it.**
+
+`src/data/fasteners.ts` carries the model that makes that visible:
+
+```
+T = K · D · F
+```
+
+K is the nut factor — an empirical lump standing in for every friction effect
+in the joint at once. It is not a physical constant, it scatters by about a
+quarter either way even on a test bench, and roughly 90% of applied torque is
+spent on friction rather than on stretching the bolt. That is the whole reason
+lubricating a thread and then torquing to the dry figure destroys joints.
+
+The simulator takes seven real fasteners out of these procedures and shows the
+clamp load against the bolt's proof and yield loads. The caliper bracket bolt
+at its published 136 N·m on clean dry threads lands at 56.7 kN — **74% of
+proof**, right in the band torque specs are normally written for, which is a
+good sign the specimen data and the model agree. Put anti-seize on the same
+bolt, keep the same wrench reading, and it reads 103 kN: **135% of proof, past
+yield**. The second readout gives the torque that would actually deliver the
+intended clamp load under those conditions — 75 N·m, not 136.
+
+Three of the specimens have a `limit` field, because the bolt is not always
+the weakest thing in the joint. A spark plug and a drain plug are both sized
+for what the aluminium around them can take.
+
+The page also carries the torque-angle curve (why TTY exists and why it cannot
+be reused), grade markings, reuse rules, and an index of **all 80 torque
+figures** in the platform, aggregated from every procedure's `torqueTable` and
+sorted by how hard the joint is clamped.
+
+Numbers here are a teaching model, not an engineering calculation, and the page
+says so where it shows them.
 
 ## Extending it
 
