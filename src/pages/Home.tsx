@@ -6,6 +6,8 @@ import { VEHICLES } from '../data/vehicles'
 import { PROCEDURES, totalSteps } from '../data/procedures'
 import { LEVELS, TOTAL_EXAM_QUESTIONS } from '../data/curriculum'
 import { CASES } from '../data/diagnostics'
+import { INSTRUMENTS } from '../data/instruments'
+import { Micrometer } from '../components/instruments'
 import { SYSTEMS, type SystemId } from '../lib/types'
 import { Chip, SectionTitle, SpecNotice } from '../components/ui'
 
@@ -215,6 +217,42 @@ export function Home() {
             </Link>
           ))}
         </div>
+      </div>
+
+      {/* ------------------------------------------------ measurement bench */}
+      <div className="mt-16">
+        <SectionTitle sub="Every procedure here hands you a limit in hundredths of a millimetre. The bench teaches the instrument that reads it.">
+          The measurement bench
+        </SectionTitle>
+        <Link
+          to="/measure"
+          className="group grid gap-5 rounded-xl border border-shop-800 bg-shop-900/30 p-5 transition-colors hover:border-amber-caution/40 hover:bg-shop-850/60 lg:grid-cols-[1fr_1.15fr] lg:items-center"
+        >
+          <div>
+            <p className="text-[13.5px] leading-relaxed text-shop-300">
+              "Discard at 21.0 mm" is useless to someone who has never read a vernier scale, and most self-taught
+              mechanics never have. Three instruments, with the sleeve and thimble drawn to scale against each
+              other so the reading comes out of the geometry — then a drill that keeps generating readings until
+              you can take them.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {INSTRUMENTS.map((i) => (
+                <span
+                  key={i.id}
+                  className="rounded border border-shop-700 bg-shop-850 px-2.5 py-1 text-[12px] text-shop-300"
+                >
+                  {i.name} <span className="font-mono text-[10.5px] text-shop-500">{i.resolution.toFixed(2)} mm</span>
+                </span>
+              ))}
+            </div>
+            <span className="mt-4 inline-block text-[13.5px] font-medium text-amber-caution">
+              Open the bench →
+            </span>
+          </div>
+          <div className="overflow-hidden rounded-lg border border-shop-800 bg-shop-950 px-3 py-4">
+            <Micrometer value={21.37} />
+          </div>
+        </Link>
       </div>
 
       {/* -------------------------------------------------- diagnostic bay */}

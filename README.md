@@ -55,7 +55,7 @@ src/
     Viewer.tsx        Canvas, lights, camera tween, explode driver, callouts
   components/         UI atoms, toolbar, part inspector, quiz
   pages/              Home, Garage, VehicleDetail, Library, Bench, Runner,
-                      Path, Exam, Diagnose
+                      Path, Exam, Diagnose, Measure
 ```
 
 ### The three ideas that make it work
@@ -169,6 +169,42 @@ answers at position A, so clicking the top option would have worked 44% of the
 time. `stage@case` lands on 5/5/5/3, which is about as close to uniform as 18
 decisions get. If you add cases, count where the right answers land before you
 assume the shuffle has handled it.
+
+---
+
+## The measurement bench
+
+Sixteen procedures hand you a limit in hundredths of a millimetre. None of them
+teaches you to read the instrument, because trade school does that in week one
+and everyone else is assumed to know it already. "Discard at 21.0 mm" is
+useless to someone who has never read a vernier scale, and most self-taught
+mechanics never have.
+
+`src/components/instruments.tsx` draws three instruments in SVG, driven by a
+value in millimetres. They are reading surfaces, not scale models, and the
+distinction is deliberate: **the scales are drawn to scale against each other**,
+so the reading comes out of the geometry rather than out of a label. Move the
+micrometer to 7.82 mm and the thimble genuinely shows 32 at the datum line with
+the 7.5 mark uncovered below it, because that is where 7.82 mm of screw travel
+puts them. The frame around them is schematic — a 25 mm jaw gap at the scale
+the barrel needs would be wider than the screen.
+
+```
+Outside micrometer   0–25 mm    0.01 mm   sleeve + 50-division thimble
+Vernier caliper      0–150 mm   0.05 mm   20 divisions spanning 39 mm
+Dial indicator       0–10 mm    0.01 mm   1 mm per revolution + counter
+```
+
+Each has an explore mode, a drill that generates readings until you can take
+them, and the specs from the procedures that need it. Two details that are not
+decoration:
+
+- The caliper's coinciding division is highlighted in **explore mode only**.
+  Finding that line is the entire skill, so the hint is off in the drill or the
+  instrument answers its own question.
+- On a phone the two long scales **scroll sideways inside their panel** rather
+  than shrinking. Squeezed to a 375 px screen the thimble divisions came out at
+  three pixels, which is not a reading surface, it is a picture of one.
 
 ## Extending it
 

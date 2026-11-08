@@ -8,6 +8,7 @@ const LINKS = [
   { to: '/garage', label: 'Garage' },
   { to: '/library', label: 'Procedures' },
   { to: '/diagnose', label: 'Diagnose' },
+  { to: '/measure', label: 'Measure' },
   { to: '/bench', label: 'Bench' },
 ]
 

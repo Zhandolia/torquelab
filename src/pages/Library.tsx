@@ -6,6 +6,7 @@ import { SYSTEMS, type SystemId } from '../lib/types'
 import { useStore } from '../lib/store'
 import { checkpointOptions, levelStatuses, programProgress } from '../lib/path'
 import { bayProgress, caseStatuses, money } from '../lib/diagnose'
+import { INSTRUMENTS } from '../data/instruments'
 import { Chip, Difficulty, fmtDuration, ProgressRing, SectionTitle, SpecNotice } from '../components/ui'
 
 type Sort = 'suggested' | 'easiest' | 'hardest' | 'shortest'
@@ -156,6 +157,10 @@ export function Bench() {
   const prog = programProgress(statuses)
   const cases = caseStatuses(diagnostics)
   const bay = bayProgress(cases)
+  const drills = useStore((s) => s.drills)
+  const drillTotal = INSTRUMENTS.reduce((n, i) => n + (drills[i.id]?.attempts ?? 0), 0)
+  const drillRight = INSTRUMENTS.reduce((n, i) => n + (drills[i.id]?.correct ?? 0), 0)
+  const drillPct = drillTotal === 0 ? 0 : Math.round((drillRight / drillTotal) * 100)
 
   const started = PROCEDURES.filter((p) => progress[p.id] && !progress[p.id].completedAt)
   const done = PROCEDURES.filter((p) => progress[p.id]?.completedAt)
@@ -309,6 +314,41 @@ export function Bench() {
               </div>
             </div>
           ))}
+        </div>
+      </Link>
+
+      {/* ------------------------------------------------ measurement drills */}
+      <Link
+        to="/measure"
+        className="mb-8 block rounded-lg border border-shop-800 bg-shop-900/30 p-4 transition-colors hover:border-shop-600 hover:bg-shop-850/50"
+      >
+        <div className="mb-3 flex items-center gap-3">
+          <ProgressRing pct={drillPct} size={34} />
+          <div className="min-w-0 flex-1">
+            <div className="text-[13.5px] font-medium text-shop-100">Measurement bench</div>
+            <div className="text-[11.5px] text-shop-500">
+              {drillTotal > 0
+                ? `${drillRight}/${drillTotal} readings correct across the three instruments`
+                : 'No readings taken yet — the drill generates them until you can read the scale'}
+            </div>
+          </div>
+          <span className="text-[12px] text-amber-caution">Open →</span>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {INSTRUMENTS.map((i) => {
+            const d = drills[i.id]
+            const pc = d && d.attempts > 0 ? Math.round((d.correct / d.attempts) * 100) : 0
+            return (
+              <div key={i.id} className="rounded border border-shop-800 bg-shop-950/40 px-2.5 py-2">
+                <div className="truncate text-[11.5px] text-shop-300">{i.name}</div>
+                <div className="tnum mt-1 text-[10.5px] text-shop-500">
+                  {d && d.attempts > 0
+                    ? `${d.correct}/${d.attempts} · ${pc}% · best streak ${d.bestStreak}`
+                    : `reads to ${i.resolution.toFixed(2)} mm`}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </Link>
 

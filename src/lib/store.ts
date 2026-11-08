@@ -36,6 +36,12 @@ export interface DiagResult {
   bestParts?: number
 }
 
+export interface DrillResult {
+  attempts: number
+  correct: number
+  bestStreak: number
+}
+
 interface State {
   progress: Record<string, ProcProgress>
   bookmarks: string[]
@@ -43,6 +49,7 @@ interface State {
   unitFtLb: boolean
   exams: Record<string, ExamResult>
   diagnostics: Record<string, DiagResult>
+  drills: Record<string, DrillResult>
   learnerName: string
   toggleStep: (proc: string, step: string) => void
   completeStep: (proc: string, step: string) => void
@@ -56,6 +63,7 @@ interface State {
   clearExam: (level: string) => void
   recordDiagnosis: (caseId: string, min: number, parts: number) => void
   clearDiagnosis: (caseId: string) => void
+  recordReading: (instrument: string, right: boolean, streak: number) => void
   setLearnerName: (name: string) => void
 }
 
@@ -70,6 +78,7 @@ export const useStore = create<State>()(
       unitFtLb: true,
       exams: {},
       diagnostics: {},
+      drills: {},
       learnerName: '',
 
       toggleStep: (proc, step) =>
@@ -161,6 +170,21 @@ export const useStore = create<State>()(
           const next = { ...s.diagnostics }
           delete next[caseId]
           return { diagnostics: next }
+        }),
+
+      recordReading: (instrument, right, streak) =>
+        set((s) => {
+          const prev = s.drills[instrument]
+          return {
+            drills: {
+              ...s.drills,
+              [instrument]: {
+                attempts: (prev?.attempts ?? 0) + 1,
+                correct: (prev?.correct ?? 0) + (right ? 1 : 0),
+                bestStreak: Math.max(prev?.bestStreak ?? 0, streak),
+              },
+            },
+          }
         }),
 
       setLearnerName: (name) => set({ learnerName: name.slice(0, 60) }),
