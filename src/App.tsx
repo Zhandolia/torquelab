@@ -36,7 +36,9 @@ function Footer() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    // BASE_URL is "/" in dev and "/torquelab/" in the GitHub Pages build, so
+    // routes resolve correctly in both without a second source of truth.
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ScrollTop />
       <div className="flex min-h-full flex-col">
         <Nav />

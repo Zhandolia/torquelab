@@ -3,11 +3,17 @@
 Interactive 3D automotive mechanics training. Rotate, zoom, explode and
 disassemble real service procedures instead of squinting at a phone video.
 
+**Live: https://zhandolia.github.io/torquelab/**
+
 ```bash
 npm install
-npm run dev     # http://localhost:5181
+npm run dev      # http://localhost:5181
 npm run build
+npm run preview  # http://localhost:4173/torquelab/ — mirrors the deployed subpath
 ```
+
+Pushing to `main` builds and deploys to GitHub Pages via
+`.github/workflows/deploy.yml`.
 
 ---
 
@@ -129,6 +135,23 @@ All torque figures, clearances and discard specs are **training reference
 values**, chosen to teach which fasteners matter and in what order. They are
 not a service information product. The app states this on every specs panel
 and in the footer, and it should keep doing so.
+
+## Deployment
+
+GitHub Pages, built by Actions on every push to `main`. Two details make a
+single-page app work on Pages:
+
+- `base` is `/torquelab/` for `vite build` and `vite preview`, but `/` for the
+  dev server. If `vite preview` is left at `/` it serves the SPA fallback for
+  every asset and the page comes up blank, which looks exactly like a broken
+  build.
+- Pages has no rewrite rule, so a deep link like `/torquelab/procedure/x` would
+  404 before React Router loaded. The build writes `404.html` as a copy of
+  `index.html`; Pages serves it for unknown paths and the router takes over.
+  `BrowserRouter` reads `basename` from `import.meta.env.BASE_URL` so there is
+  one source of truth for the path prefix.
+
+Renaming the repo means changing `REPO_BASE` in `vite.config.ts` to match.
 
 ## Stack
 
