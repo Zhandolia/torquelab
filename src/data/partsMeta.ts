@@ -1,0 +1,139 @@
+import type { PartInfo } from '../lib/types'
+
+/**
+ * Reference card for every named part in every 3D assembly. Clicking a part in
+ * the viewer pulls its entry from here.
+ */
+export const PARTS_META: Record<string, PartInfo[]> = {
+  brakeFront: [
+    { id: 'wheel', name: 'Road wheel & tyre', group: 'Wheel', material: 'Cast aluminium', fn: 'Transfers braking torque to the road. Clamped to the hub by the lug nuts.', torque: '108 N·m', inspect: 'Bent lip, cracked spokes, corrosion on the mounting face' },
+    { id: 'lugNuts', name: 'Lug nut (×5)', group: 'Wheel', material: 'Steel, zinc plated', fn: 'Clamps the wheel and rotor against the hub face. The clamp load, not the nut, is what holds the wheel on.', torque: '108 N·m, star pattern', inspect: 'Rounded hex, stretched threads, swollen chrome caps' },
+    { id: 'rotor', name: 'Brake rotor', group: 'Friction', material: 'Grey cast iron, internally vented', fn: 'The rotating friction surface. The vanes between the two plates pump air through the disc to shed heat.', inspect: 'Thickness, lateral runout, heat cracks, lipping at the outer edge' },
+    { id: 'padOuter', name: 'Outer brake pad', group: 'Friction', material: 'Ceramic or semi-metallic friction on a steel backing plate', fn: 'Pressed against the rotor by the caliper fingers. Converts kinetic energy into heat.', inspect: 'Friction thickness, tapered wear, glazing, cracked friction' },
+    { id: 'padInner', name: 'Inner brake pad', group: 'Friction', material: 'Friction on steel backing plate', fn: 'Pressed directly by the piston. Normally wears slightly faster than the outer pad.', inspect: 'Thickness, wear sensor condition' },
+    { id: 'shims', name: 'Anti-squeal shims', group: 'Friction', material: 'Laminated steel and rubber', fn: 'Damps the high-frequency vibration between pad and caliper that you hear as brake squeal.', inspect: 'Delamination, corrosion, missing layers' },
+    { id: 'caliper', name: 'Brake caliper', group: 'Hydraulic', material: 'Cast aluminium or iron', fn: 'Converts brake fluid pressure into clamping force. A sliding caliper floats on its pins so one piston can load both pads.', inspect: 'Piston seized or weeping, torn dust boot, bleeder condition' },
+    { id: 'guidePins', name: 'Guide pin & boot (×2)', group: 'Hydraulic', material: 'Hardened steel pin, rubber boot', fn: 'Lets the caliper body slide so it self-centres on the rotor. Must move freely by hand.', torque: '32 N·m (bolt)', inspect: 'Dry or seized pin, split boot, corrosion in the bore' },
+    { id: 'bracket', name: 'Caliper bracket', group: 'Structure', material: 'Cast iron', fn: 'Carries the entire braking torque from the pads into the steering knuckle. The structural member of the corner.', torque: '136 N·m (bolts)', inspect: 'Cracks, worn pad abutment surfaces' },
+    { id: 'bracketBolts', name: 'Bracket bolt (×2)', group: 'Structure', material: 'High tensile steel', fn: 'Clamps the bracket to the knuckle. Highest torque fastener in the corner.', torque: '136 N·m', inspect: 'Corrosion, thread damage, previous over-torque' },
+    { id: 'hub', name: 'Hub & wheel bearing', group: 'Structure', material: 'Machined steel, sealed bearing', fn: 'Lets the wheel rotate while carrying vertical, lateral and braking loads. Its flange face sets rotor runout.', inspect: 'Play, roughness when spun, rust scale on the mounting face' },
+    { id: 'knuckle', name: 'Steering knuckle', group: 'Structure', material: 'Cast iron', fn: 'The casting everything bolts to: hub, strut, ball joint, tie rod and brake bracket.', inspect: 'Cracks, elongated bolt holes, corrosion' },
+    { id: 'shield', name: 'Dust shield', group: 'Structure', material: 'Stamped steel', fn: 'Keeps road debris and water off the inboard rotor face. Cosmetically irrelevant, functionally useful.', inspect: 'Bent into the rotor — the usual cause of a scraping noise' },
+    { id: 'hose', name: 'Flexible brake hose', group: 'Hydraulic', material: 'Reinforced rubber with crimped fittings', fn: 'Carries fluid pressure to the caliper while allowing full steering and suspension movement.', torque: '34 N·m (banjo bolt)', inspect: 'Cracking, bulging under pressure, chafing, internal collapse' },
+  ],
+
+  strutFront: [
+    { id: 'strut', name: 'Strut / damper', group: 'Damping', material: 'Steel tube, hydraulic', fn: 'Damps spring oscillation by forcing oil through valved orifices, and acts as a structural suspension link locating the top of the knuckle.', inspect: 'Oil weeping down the body, dented tube, bent rod, bottoming noise' },
+    { id: 'spring', name: 'Coil spring', group: 'Springing', material: 'Spring steel, powder coated', fn: 'Carries the weight of the corner and sets ride height. Stores enormous energy when compressed.', inspect: 'Corrosion pitting, broken end coil, sagging ride height' },
+    { id: 'upperMount', name: 'Upper strut mount', group: 'Mounting', material: 'Steel with bonded rubber', fn: 'Bolts the top of the assembly to the body and isolates road noise through its rubber bush.', torque: '29 N·m (×3)', inspect: 'Separated rubber, clunk over bumps, cracked plate' },
+    { id: 'bearing', name: 'Thrust bearing', group: 'Mounting', material: 'Polymer or caged ball bearing', fn: 'Lets the whole strut and spring rotate as the wheel steers, under full corner load.', inspect: 'Notchy or clicking steering at a standstill, binding return to centre' },
+    { id: 'centreNut', name: 'Damper shaft nut', group: 'Mounting', material: 'Self-locking steel nut', fn: 'Clamps the top hat stack onto the damper rod.', torque: '29 N·m — new nut', inspect: 'Reused locking feature, rounded flats' },
+    { id: 'upperNuts', name: 'Upper mount nut (×3)', group: 'Mounting', fn: 'Holds the mount to the strut tower.', torque: '29 N·m', inspect: 'Corrosion, tower rust around the studs' },
+    { id: 'bumpStop', name: 'Bump stop', group: 'Springing', material: 'Microcellular urethane', fn: 'The progressive final spring before suspension travel runs out. Protects the damper from bottoming metal to metal.', inspect: 'Crumbling, compressed flat, missing entirely' },
+    { id: 'dustBoot', name: 'Dust boot', group: 'Springing', material: 'Rubber or plastic bellows', fn: 'Keeps grit off the damper rod. Grit on the rod cuts the rod seal, which is how dampers start leaking.', inspect: 'Split, collapsed, filled with debris' },
+    { id: 'upperSeat', name: 'Upper spring seat', group: 'Springing', material: 'Stamped steel with rubber isolator', fn: 'Locates the top of the coil and isolates it from the mount.', inspect: 'Perished isolator, corroded seat' },
+    { id: 'lowerSeat', name: 'Lower spring seat', group: 'Springing', material: 'Welded steel', fn: 'Carries the bottom of the coil. The moulded step indexes the spring end so it sits square.', inspect: 'Rust-through, cracked welds' },
+    { id: 'knuckle', name: 'Steering knuckle', group: 'Structure', material: 'Cast iron', fn: 'Carries the hub and clamps to the bottom of the strut.', torque: '157 N·m (flange bolts)', inspect: 'Cracks, elongated clamp holes' },
+    { id: 'strutBolts', name: 'Damper flange bolt (×2)', group: 'Structure', fn: 'Clamps the damper into the knuckle. Often slotted on one side for camber adjustment.', torque: '157 N·m', inspect: 'Corrosion seizure, stretch if it is a one-time bolt' },
+    { id: 'controlArm', name: 'Lower control arm', group: 'Structure', material: 'Cast iron or stamped steel', fn: 'Locates the bottom of the knuckle fore-aft and laterally. Pivots on rubber bushings at the subframe.', torque: '103 N·m at ride height', inspect: 'Cracked or separated bushings, bent arm, play at the ball joint' },
+    { id: 'ballJoint', name: 'Lower ball joint', group: 'Structure', material: 'Hardened steel in a polymer socket', fn: 'The pivot that lets the knuckle steer while carrying vertical load.', torque: '59 N·m (nut)', inspect: 'Any play, torn boot, grease loss' },
+    { id: 'swayLink', name: 'Stabilizer link', group: 'Roll control', material: 'Steel with ball sockets or bushes', fn: 'Connects the anti-roll bar to the strut so body roll loads the bar in torsion.', torque: '44 N·m', inspect: 'Play in the sockets, rattle over small bumps' },
+  ],
+
+  timingV6: [
+    { id: 'belt', name: 'Timing belt', group: 'Drive', material: 'HNBR rubber with fibreglass cords, nylon-faced teeth', fn: 'Keeps the camshafts in exact phase with the crankshaft. On an interference engine it is the only thing preventing valve-to-piston contact.', inspect: 'Cracks between teeth, missing teeth, glazing, oil contamination, age' },
+    { id: 'crankSprocket', name: 'Crankshaft sprocket', group: 'Drive', material: 'Sintered or machined steel', fn: 'Drives the belt. Keyed to the crank so its position cannot drift.', inspect: 'Worn tooth flanks, damaged keyway' },
+    { id: 'camFront', name: 'Front bank cam sprocket', group: 'Drive', material: 'Steel', fn: 'Drives the front cylinder bank camshaft. Twice the diameter of the crank sprocket, hence the 2:1 cam-to-crank ratio.', torque: '83 N·m', inspect: 'Timing mark legibility, tooth wear, seal weep behind it' },
+    { id: 'camRear', name: 'Rear bank cam sprocket', group: 'Drive', material: 'Steel', fn: 'Drives the rear bank camshaft. Both cam marks must index together at TDC #1.', torque: '83 N·m', inspect: 'Same as the front — plus access, which is the hard part' },
+    { id: 'tensioner', name: 'Hydraulic belt tensioner', group: 'Tension', material: 'Steel body, hydraulic damper', fn: 'Maintains belt tension across temperature and load changes. Replaced with every belt, without exception.', torque: '29 N·m', inspect: 'Leaking damper, plunger that will not hold, seized pivot' },
+    { id: 'idler', name: 'Idler pulley', group: 'Tension', material: 'Steel with sealed bearing', fn: 'Routes the belt and controls the wrap angle on the crank sprocket.', torque: '39 N·m', inspect: 'Bearing roughness, play, grease loss' },
+    { id: 'waterPump', name: 'Water pump', group: 'Cooling', material: 'Aluminium housing, impeller', fn: 'Circulates coolant. Driven by the timing belt on this engine, which makes its failure a timing failure too.', torque: '12 N·m (bolts)', inspect: 'Weep hole staining, shaft play, impeller erosion' },
+    { id: 'crankPulley', name: 'Crankshaft pulley / damper', group: 'Accessory', material: 'Cast iron with a bonded rubber ring', fn: 'Drives the accessory belt and damps crankshaft torsional vibration. The rubber ring is a wear item.', inspect: 'Ring separation, wobble, cracked rubber' },
+    { id: 'crankBolt', name: 'Crank pulley bolt', group: 'Accessory', material: 'High tensile steel', fn: 'Clamps the pulley to the crankshaft snout at very high torque — the single biggest fastener in this job.', torque: '245 N·m', inspect: 'Stretched threads, previous use of an impact gun' },
+    { id: 'upperCover', name: 'Upper timing cover', group: 'Covers', material: 'Glass-filled nylon', fn: 'Keeps dirt and water off the belt and keeps the belt out of the engine bay.', torque: '10 N·m', inspect: 'Cracked bosses, missing bolts, perished seal strip' },
+    { id: 'lowerCover', name: 'Lower timing cover', group: 'Covers', material: 'Glass-filled nylon', fn: 'Lower half of the belt enclosure. Carries the crank timing pointer.', torque: '10 N·m', inspect: 'Cracks around bolt holes' },
+  ],
+
+  cylinderHead: [
+    { id: 'head', name: 'Cylinder head', group: 'Core', material: 'Cast aluminium alloy', fn: 'Forms the combustion chamber, carries the valves, cams and ports, and seals the top of each cylinder.', inspect: 'Flatness under 0.05 mm, cracks between seats, valve seat recession' },
+    { id: 'gasket', name: 'Head gasket', group: 'Sealing', material: 'Multi-layer steel', fn: 'Seals combustion pressure, coolant and oil between the head and block, across three fluids and 2000 °C gas.', inspect: 'Wash-out between cylinders, eroded coolant beads, fretting' },
+    { id: 'block', name: 'Engine block', group: 'Core', material: 'Cast aluminium with iron liners', fn: 'Carries the cylinders, crankshaft and the entire structural load of the engine.', inspect: 'Deck flatness, bore condition, thread condition in the bolt holes' },
+    { id: 'bolt1', name: 'Head bolt — position 1', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'First in the tightening sequence. Centre of the head, so it establishes the initial gasket crush.', torque: '49 N·m +90° +90°', inspect: 'Single use. Measure length against a new bolt if in doubt' },
+    { id: 'bolt2', name: 'Head bolt — position 2', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'Second in sequence, paired across the head from position 1.', torque: '49 N·m +90° +90°' },
+    { id: 'bolt3', name: 'Head bolt — position 3', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'Working outward from the centre pair.', torque: '49 N·m +90° +90°' },
+    { id: 'bolt4', name: 'Head bolt — position 4', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'Alternating side to keep the crush symmetrical.', torque: '49 N·m +90° +90°' },
+    { id: 'bolt5', name: 'Head bolt — position 5', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'Continuing the spiral outward.', torque: '49 N·m +90° +90°' },
+    { id: 'bolt6', name: 'Head bolt — position 6', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'Continuing the spiral outward.', torque: '49 N·m +90° +90°' },
+    { id: 'bolt7', name: 'Head bolt — position 7', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'Approaching the ends of the head.', torque: '49 N·m +90° +90°' },
+    { id: 'bolt8', name: 'Head bolt — position 8', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'Approaching the ends of the head.', torque: '49 N·m +90° +90°' },
+    { id: 'bolt9', name: 'Head bolt — position 9', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'One of the last two, at the extreme end.', torque: '49 N·m +90° +90°' },
+    { id: 'bolt10', name: 'Head bolt — position 10', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'Final bolt in the sequence. Also the first to be loosened on removal.', torque: '49 N·m +90° +90°' },
+    { id: 'camCover', name: 'Camshaft cover', group: 'Sealing', material: 'Cast aluminium or moulded composite', fn: 'Seals the top of the head and houses the oil separator and plug tube seals.', torque: '11 N·m', inspect: 'Warped flange, hardened gasket, cracked plug tube seals' },
+    { id: 'intake', name: 'Intake manifold', group: 'Breathing', material: 'Moulded composite', fn: 'Distributes air to each cylinder and carries the injectors on a port-injected engine.', torque: '28 N·m', inspect: 'Cracks at the runners, perished port gaskets, carbon in the ports' },
+    { id: 'exhaust', name: 'Exhaust manifold', group: 'Breathing', material: 'Cast iron or stainless', fn: 'Collects exhaust gas and carries the upstream oxygen sensor and often the catalyst.', torque: '37 N·m', inspect: 'Cracks between runners, warped flange, snapped studs' },
+  ],
+
+  rotatingAssembly: [
+    { id: 'crank', name: 'Crankshaft', group: 'Rotating', material: 'Forged steel', fn: 'Converts reciprocating piston motion into rotation. Five main journals carry it; four rod journals each serve two cylinders.', inspect: 'Journal diameter, out-of-round, taper, thrust face wear, cracks' },
+    { id: 'mainBearings', name: 'Main bearing shells', group: 'Bearings', material: 'Steel backing with aluminium-tin or trimetal overlay', fn: 'Float the crankshaft on a pressurised oil film. The oil, not the metal, carries the load.', inspect: 'Even overlay loss (normal), scoring (dirt), wiping (starvation), copper (end of life)' },
+    { id: 'mainCaps', name: 'Main bearing caps', group: 'Bearings', material: 'Forged or cast steel', fn: 'Clamp the lower half of each main bearing. Machined in place with the block, so they are position- and direction-specific.', inspect: 'Register fit, cracks, correct position markings' },
+    { id: 'mainBolts', name: 'Main cap bolts', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'Provide the clamp load that keeps the bearing bore round under combustion load.', torque: '40 N·m +90°', inspect: 'Single use. Any stretch beyond spec means scrap' },
+    { id: 'bankAPistons', name: 'Bank A pistons', group: 'Reciprocating', material: 'Hypereutectic or forged aluminium', fn: 'Seal the combustion chamber and transmit gas pressure to the rod. The dish or valve reliefs set compression ratio.', inspect: 'Skirt scuffing, ring groove wear, crown erosion, pin bore condition' },
+    { id: 'bankBPistons', name: 'Bank B pistons', group: 'Reciprocating', material: 'Aluminium alloy', fn: 'Opposite bank. Rings must be gapped to their own individual bore, not as a set.', inspect: 'Same as bank A — plus check for a different wear pattern side to side' },
+    { id: 'bankARods', name: 'Bank A connecting rods', group: 'Reciprocating', material: 'Forged or powder-forged steel', fn: 'Transmit piston force to the crank throw while swinging through an arc. Caps are machined with their own rod.', inspect: 'Bend and twist, big-end bore condition, bolt stretch' },
+    { id: 'bankBRods', name: 'Bank B connecting rods', group: 'Reciprocating', material: 'Forged steel', fn: 'Share each rod journal with the opposite bank, which is why side clearance is measured as a pair.', inspect: 'Same as bank A' },
+    { id: 'bankARodBolts', name: 'Bank A rod bolts', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'Clamp the rod cap. The highest cyclically loaded fastener in the engine.', torque: '30 N·m +90°', inspect: 'Single use, always' },
+    { id: 'bankBRodBolts', name: 'Bank B rod bolts', group: 'Fasteners', material: 'Torque-to-yield steel', fn: 'As bank A.', torque: '30 N·m +90°' },
+    { id: 'damper', name: 'Crankshaft damper', group: 'Rotating', material: 'Cast iron with bonded elastomer', fn: 'Tunes out crankshaft torsional resonance and drives the accessory belt.', inspect: 'Rubber ring separation, wobble, timing mark alignment' },
+    { id: 'rearSeal', name: 'Rear main seal', group: 'Sealing', material: 'PTFE or nitrile lip seal', fn: 'Seals the back of the crankshaft where it exits to the transmission. The classic hard-to-reach oil leak.', inspect: 'Hardened lip, groove worn into the crank, correct install depth' },
+  ],
+
+  transService: [
+    { id: 'pan', name: 'Transmission pan', group: 'Housing', material: 'Stamped steel or cast aluminium', fn: 'Holds the fluid reservoir and, with its magnets, traps wear debris.', torque: '12 N·m (bolts)', inspect: 'Bent flange, dents, stripped bolt holes' },
+    { id: 'panBolts', name: 'Pan bolts (×22)', group: 'Fasteners', fn: 'Clamp the pan to the case. A very low torque spec that is routinely exceeded.', torque: '12 N·m / 106 in-lb', inspect: 'Stretched, mismatched lengths, stripped case threads' },
+    { id: 'gasket', name: 'Pan gasket', group: 'Sealing', material: 'Moulded rubber or composite', fn: 'Seals the pan to the case. Fitted dry — never with silicone.', inspect: 'Compression set, tears, previous RTV contamination' },
+    { id: 'filter', name: 'Transmission filter', group: 'Hydraulic', material: 'Nylon mesh in a plastic housing', fn: 'Filters fluid on the suction side of the pump. Its neck seal must be replaced with it.', inspect: 'Collapsed mesh, debris loading, old seal left in the bore' },
+    { id: 'valveBody', name: 'Valve body', group: 'Hydraulic', material: 'Cast aluminium with steel separator plates', fn: 'The hydraulic brain: solenoids and spool valves route pressure to the clutch packs that select each gear.', inspect: 'Solenoid resistance, worn bores, separator plate wear' },
+    { id: 'magnets', name: 'Pan magnets', group: 'Diagnostics', material: 'Ferrite or neodymium', fn: 'Collect ferrous wear particles so they do not circulate. Reading them is free diagnostic information.', inspect: 'Grey paste is normal. Flakes, chunks or fibrous material is not' },
+  ],
+
+  doorPanel: [
+    { id: 'trimPanel', name: 'Door trim panel', group: 'Trim', material: 'Moulded polypropylene with fabric or vinyl', fn: 'The interior surface. Carries the armrest, grab handle, switches and speaker grille.', torque: '2 N·m (screws)', inspect: 'Broken clip bosses, lifting fabric, cracked grab pocket' },
+    { id: 'clips', name: 'Trim clips (×12)', group: 'Fasteners', material: 'Nylon', fn: 'Christmas-tree clips that hold the panel to the door shell. Reusable if removed correctly.', inspect: 'Split barbs, clips left behind in the door shell' },
+    { id: 'trimScrews', name: 'Hidden screws', group: 'Fasteners', fn: 'Take the structural load of the armrest. The panel will not release until every one is out.', torque: '2 N·m — hand tight', inspect: 'Stripped plastic bosses from power tools' },
+    { id: 'weatherSheet', name: 'Weather / vapour sheet', group: 'Sealing', material: 'Polyethylene with butyl adhesive', fn: 'A water barrier that directs water running down inside the door to the drains instead of into the cabin.', inspect: 'Torn, loose butyl, previously removed and discarded' },
+    { id: 'speaker', name: 'Door speaker', group: 'Electrical', material: 'Paper or polypropylene cone, steel basket', fn: 'Low and mid-range audio output. Mounted on a baffle so the door cavity acts as an enclosure.', torque: '3 N·m', inspect: 'Rotted surround, water damage, corroded terminals' },
+    { id: 'regulator', name: 'Window regulator', group: 'Mechanism', material: 'Steel scissor or cable-and-drum, plastic guides', fn: 'Raises and lowers the glass. The plastic guides are usually what fails, not the motor.', torque: '8 N·m', inspect: 'Frayed cable, cracked guides, glass tilting in the track' },
+    { id: 'switchPack', name: 'Window switch pack', group: 'Electrical', material: 'Moulded plastic with a locking connector', fn: 'Driver controls for all windows, locks and mirrors. The connector has a latch that must be released first.', inspect: 'Sticky buttons, cracked connector housing, corroded pins' },
+    { id: 'handleRod', name: 'Inner handle cable', group: 'Mechanism', material: 'Bowden cable or steel rod', fn: 'Links the inner handle to the latch. Must be reconnected and routed correctly or the door will not open from inside.', inspect: 'Stretched cable, popped end fitting' },
+    { id: 'armrest', name: 'Armrest / pull handle', group: 'Trim', material: 'Moulded plastic with padding', fn: 'Takes the load of the door being pulled shut, which is why its fasteners are the structural ones.', inspect: 'Cracked mounting points, worn padding' },
+  ],
+
+  bumperCover: [
+    { id: 'cover', name: 'Bumper cover', group: 'Cosmetic', material: 'Painted thermoplastic (TPO or PP)', fn: 'Aerodynamic and cosmetic skin. Carries no crash load — it deforms and is replaced.', torque: '2 N·m (fasteners)', inspect: 'Broken mounting ears, stress cracks, paint cracking at flex points' },
+    { id: 'grille', name: 'Radiator grille', group: 'Cosmetic', material: 'Moulded plastic, often chrome or gloss finished', fn: 'Directs air to the radiator and finishes the front face. Usually clipped into the cover.', inspect: 'Broken clips, impact damage to the slats' },
+    { id: 'absorber', name: 'Energy absorber', group: 'Safety', material: 'Expanded polypropylene foam', fn: 'Absorbs low-speed impact energy and manages pedestrian leg-form loads. Sacrificial by design.', inspect: 'Crushed or cracked foam means the car has had a front impact' },
+    { id: 'reinfBar', name: 'Reinforcement bar', group: 'Structure', material: 'High-strength steel or aluminium', fn: 'The structural crash beam. Bolts to the frame rails through crush cans and carries real collision load.', torque: '74 N·m', inspect: 'Bent beam, deformed crush cans, previous repair' },
+    { id: 'barBolts', name: 'Reinforcement bolts', group: 'Fasteners', material: 'High tensile steel', fn: 'The only genuinely structural fasteners in this job.', torque: '74 N·m', inspect: 'Corrosion, previous impact elongation' },
+    { id: 'topClips', name: 'Top push-pin rivets', group: 'Fasteners', material: 'Nylon', fn: 'Hold the upper edge of the cover under the hood line. Single use — they do not survive removal.', inspect: 'Replace all of them, every time' },
+    { id: 'linerRight', name: 'Fender liner (right)', group: 'Cosmetic', material: 'Moulded plastic or felt composite', fn: 'Keeps road spray and stones out of the engine bay and off the wiring.', inspect: 'Torn at the fasteners, missing screws, rubbing the tyre' },
+    { id: 'linerLeft', name: 'Fender liner (left)', group: 'Cosmetic', material: 'Moulded plastic', fn: 'As the right side. Overlaps the bumper cover at the arch.', inspect: 'Same as right' },
+    { id: 'lampRight', name: 'Headlamp (right)', group: 'Lighting', material: 'Polycarbonate lens, plastic housing', fn: 'Mounted to the body, not the cover, but usually only accessible once the cover is off.', torque: '9 N·m', inspect: 'Lens hazing, cracked mounting tabs, moisture inside' },
+    { id: 'lampLeft', name: 'Headlamp (left)', group: 'Lighting', material: 'Polycarbonate lens', fn: 'As the right side.', torque: '9 N·m', inspect: 'Same as right' },
+  ],
+
+  oilService: [
+    { id: 'oilPan', name: 'Oil pan / sump', group: 'Housing', material: 'Cast aluminium or stamped steel', fn: 'Holds the oil reservoir and carries the drain plug. On aluminium pans the drain threads are the weak point.', inspect: 'Dents, seeping gasket, damaged drain threads' },
+    { id: 'drainPlug', name: 'Drain plug', group: 'Fasteners', material: 'Steel, sometimes with a magnetic tip', fn: 'Seals the drain port. Sealing is done by the crush washer, not by how hard you tighten it.', torque: '39 N·m', inspect: 'Rounded hex, galled threads, debris on a magnetic tip' },
+    { id: 'crushWasher', name: 'Crush washer', group: 'Sealing', material: 'Soft aluminium or copper', fn: 'Deforms to fill the imperfections between plug and pan. Single use — it has one crush in it.', inspect: 'Always replace. A reused one seeps' },
+    { id: 'filter', name: 'Oil filter', group: 'Filtration', material: 'Steel canister, cellulose or synthetic media', fn: 'Filters the full oil flow, and its anti-drainback valve keeps the galleries primed when the engine is off.', torque: '26 N·m or 3/4 turn past contact', inspect: 'Correct part number — bypass pressure and drainback valves differ' },
+    { id: 'filterGasket', name: 'Filter gasket', group: 'Sealing', material: 'Nitrile rubber', fn: 'Seals the filter to its mount under full oil pressure. Lubricate it before fitting so it does not roll.', inspect: 'Must come off with the old filter. Two stacked gaskets is a catastrophic leak' },
+    { id: 'filterMount', name: 'Filter mounting boss', group: 'Housing', material: 'Machined aluminium', fn: 'The sealing face and threaded spigot the filter screws onto.', inspect: 'Old gasket stuck to the face, nicks in the sealing surface' },
+    { id: 'fillCap', name: 'Oil filler cap', group: 'Service', material: 'Moulded plastic with an O-ring', fn: 'Seals the crankcase at the fill point. Often carries the viscosity spec moulded into it.', inspect: 'Perished O-ring, cross-threaded, sludge on the underside' },
+    { id: 'dipstick', name: 'Dipstick', group: 'Service', material: 'Spring steel blade', fn: 'Measures level between the low and high marks, read five minutes after shutdown on level ground.', inspect: 'Bent blade, illegible marks, missing seal on the tube' },
+    { id: 'drainPan', name: 'Drain pan', group: 'Equipment', fn: 'Catches the old oil. Position it offset — oil leaves the drain port at an angle, not straight down.', inspect: 'Capacity adequate for the engine' },
+  ],
+}
+
+export const partsFor = (assembly: string) => PARTS_META[assembly] ?? []
+export const partInfo = (assembly: string, id: string) => partsFor(assembly).find((p) => p.id === id)

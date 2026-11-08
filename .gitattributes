@@ -1,0 +1,14 @@
+# Normalize to LF in the repository so Windows and macOS/Linux checkouts
+# don't produce whole-file diffs. Working copies still get native endings.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# Generated — collapse it in diffs and reviews
+package-lock.json linguist-generated=true -diff
