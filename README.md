@@ -127,9 +127,20 @@ assembly stays full-colour and let the hotspots do the labelling.
 
 ## Content status
 
-Nine procedures across nine assemblies, spanning brakes, suspension, engine
-mechanical, valve timing, driveline, interior trim, exterior body and core
-maintenance, on five training platforms.
+Thirteen procedures across thirteen assemblies on six training platforms,
+covering every system category the app defines: brakes (disc and drum),
+suspension and steering, engine mechanical, valve timing, transmission and
+driveline, cooling, interior trim, exterior body and core maintenance.
+
+Two things in the 3D are deliberate simplifications worth knowing about:
+
+- `beltPath` wraps the belt around the **outside** of every pulley, so belt
+  routes are convex. Timing drives genuinely are; serpentine drives usually
+  include a backside idler the belt wraps the other way. The serpentine module
+  says so in the step text and points the student at the routing decal.
+- Assemblies are laid out for legibility, not packaging. Nothing is fighting
+  for space the way it does on a real car, which is the point — you learn the
+  relationships here and the contortions in the driveway.
 
 All torque figures, clearances and discard specs are **training reference
 values**, chosen to teach which fasteners matter and in what order. They are

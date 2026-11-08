@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Viewer } from '../three/Viewer'
+import { ASSEMBLIES } from '../three/assemblies'
 import { VEHICLES } from '../data/vehicles'
 import { PROCEDURES, totalSteps } from '../data/procedures'
 import { SYSTEMS, type SystemId } from '../lib/types'
@@ -114,7 +115,7 @@ export function Home() {
             <Stat n={String(PROCEDURES.length)} label="Full procedures" />
             <Stat n={String(totalSteps)} label="Guided steps" />
             <Stat n={String(VEHICLES.length)} label="Training vehicles" />
-            <Stat n="9" label="3D assemblies" />
+            <Stat n={String(Object.keys(ASSEMBLIES).length)} label="3D assemblies" />
           </div>
         </div>
 

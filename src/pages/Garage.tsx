@@ -32,6 +32,7 @@ const SHAPES: Record<string, 'sedan' | 'coupe' | 'truck'> = {
   'mustang-gt-2018': 'coupe',
   'silverado-2015': 'truck',
   'camry-2014': 'sedan',
+  'corolla-2015': 'sedan',
 }
 
 export function Garage() {

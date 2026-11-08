@@ -186,7 +186,14 @@ export function beltPath(pulleys: PulleyNode[], arcSeg = 10): THREE.Vector2[] {
  * Flat toothed belt swept along a closed 2D path. The inner face is modulated
  * by arc length so the teeth stay evenly pitched all the way round.
  */
-export function beltGeometry(path: THREE.Vector2[], width: number, thickness: number, toothPitch = 0.055) {
+export function beltGeometry(
+  path: THREE.Vector2[],
+  width: number,
+  thickness: number,
+  toothPitch = 0.055,
+  /** 0 for a smooth serpentine belt, ~0.55 for a toothed timing belt */
+  toothRatio = 0.55,
+) {
   const N = path.length
   const pos: number[] = []
   const idx: number[] = []
@@ -198,7 +205,7 @@ export function beltGeometry(path: THREE.Vector2[], width: number, thickness: nu
   }
   const total = len[N]
   const teeth = Math.max(8, Math.round(total / toothPitch))
-  const toothDepth = thickness * 0.55
+  const toothDepth = thickness * toothRatio
 
   const hw = width / 2
   for (let i = 0; i < N; i++) {
@@ -314,6 +321,76 @@ export function shellPanel(w: number, h: number, t: number, bowX: number, bowY: 
   p.needsUpdate = true
   g.computeVertexNormals()
   return g
+}
+
+/* ------------------------------------------------------------------- arcs */
+
+/**
+ * Annular sector — the shape of a brake shoe, a backing plate segment or any
+ * curved rib. Angles in radians, extruded in Z.
+ */
+export function arcPlate(
+  rInner: number,
+  rOuter: number,
+  startAngle: number,
+  endAngle: number,
+  depth: number,
+) {
+  const shape = new THREE.Shape()
+  shape.absarc(0, 0, rOuter, startAngle, endAngle, false)
+  shape.absarc(0, 0, rInner, endAngle, startAngle, true)
+  shape.closePath()
+  const g = new THREE.ExtrudeGeometry(shape, { ...EXTRUDE, depth })
+  g.translate(0, 0, -depth / 2)
+  return g
+}
+
+/** Open-ended cylinder wall used for drum shells and bearing races. */
+export function ring(radius: number, height: number, thickness: number, seg = 48) {
+  const shape = new THREE.Shape()
+  shape.absarc(0, 0, radius, 0, Math.PI * 2, false)
+  const hole = new THREE.Path()
+  hole.absarc(0, 0, radius - thickness, 0, Math.PI * 2, true)
+  shape.holes.push(hole)
+  const g = new THREE.ExtrudeGeometry(shape, { ...EXTRUDE, depth: height, curveSegments: seg })
+  g.translate(0, 0, -height / 2)
+  return g
+}
+
+/* ----------------------------------------------------------------- bellows */
+
+/**
+ * Convoluted boot — CV joints, steering racks, dust covers. Lathed around Y so
+ * the folds stay even as the two ends taper to different diameters.
+ */
+export function bellows(rStart: number, rEnd: number, length: number, folds = 6, amp = 0.045) {
+  const pts: THREE.Vector2[] = []
+  const steps = folds * 4
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps
+    const base = rStart + (rEnd - rStart) * t
+    // taper the fold depth out at both ends so the clamps sit on smooth bands
+    const envelope = Math.sin(Math.min(1, t * 6) * (Math.PI / 2)) * Math.sin(Math.min(1, (1 - t) * 6) * (Math.PI / 2))
+    const r = base + Math.sin(t * folds * Math.PI * 2) * amp * envelope
+    pts.push(new THREE.Vector2(Math.max(0.01, r), t * length - length / 2))
+  }
+  return new THREE.LatheGeometry(pts, 40)
+}
+
+/* ---------------------------------------------------------------- radiator */
+
+/** Radiator / condenser core: a slab with vertical tubes and visible fin banding. */
+export function radiatorCore(w: number, h: number, d: number, tubes = 26) {
+  const parts: THREE.BufferGeometry[] = []
+  const slab = new THREE.BoxGeometry(w, h, d * 0.55)
+  parts.push(slab)
+  for (let i = 0; i < tubes; i++) {
+    const x = -w / 2 + (w / (tubes - 1)) * i
+    const t = new THREE.BoxGeometry(w / tubes / 2.6, h * 0.98, d)
+    t.translate(x, 0, 0)
+    parts.push(t)
+  }
+  return mergeGeos(parts)
 }
 
 /* ------------------------------------------------------------------ merging */

@@ -2,13 +2,17 @@ import { useMemo } from 'react'
 import * as THREE from 'three'
 import { Mat, type MatKey } from './materials'
 import {
+  arcPlate,
   beltGeometry,
   beltPath,
+  bellows,
   discWithHoles,
   helixTube,
   hexPrism,
   outlinePlate,
   pulleyProfile,
+  radiatorCore,
+  ring,
   roundedPlate,
   routedTube,
   sprocket,
@@ -17,6 +21,8 @@ import {
 } from './geo'
 
 type V3 = [number, number, number]
+
+const HALF = Math.PI / 2
 
 /* ============================================================== fasteners */
 
@@ -1259,6 +1265,398 @@ export function Hose({
   return (
     <mesh geometry={geo}>
       <Mat k={mat} />
+    </mesh>
+  )
+}
+
+/* ========================================================== drum brakes */
+
+export function BrakeDrum({
+  od = 1.5,
+  depth = 0.52,
+  lugs = 4,
+  position,
+  rotation,
+}: {
+  od?: number
+  depth?: number
+  lugs?: number
+  position?: V3
+  rotation?: V3
+}) {
+  const shell = useMemo(() => ring(od / 2, depth, 0.07), [od, depth])
+  const face = useMemo(
+    () => discWithHoles(od, 0.34, 0.06, [{ r: 0.038, count: lugs, dist: 0.26 }]),
+    [od, lugs],
+  )
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh geometry={shell} castShadow receiveShadow>
+        <Mat k="castIron" />
+      </mesh>
+      <mesh geometry={face} position={[0, 0, depth / 2 - 0.03]}>
+        <Mat k="castIron" />
+      </mesh>
+      {/* machined friction surface just inside the shell */}
+      <mesh rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[od / 2 - 0.075, od / 2 - 0.075, depth * 0.84, 48, 1, true]} />
+        <Mat k="machined" side={THREE.BackSide} />
+      </mesh>
+    </group>
+  )
+}
+
+/** Curved shoe: web plate, arced table and bonded friction lining. */
+export function BrakeShoe({
+  r = 0.6,
+  span = 2.1,
+  start = 0,
+  lining = 0.07,
+  wear = 1,
+  position,
+  rotation,
+}: {
+  r?: number
+  span?: number
+  start?: number
+  lining?: number
+  wear?: number
+  position?: V3
+  rotation?: V3
+}) {
+  const table = useMemo(() => arcPlate(r - 0.03, r, start, start + span, 0.3), [r, span, start])
+  const friction = useMemo(
+    () => arcPlate(r, r + lining * wear, start + 0.08, start + span - 0.08, 0.26),
+    [r, span, start, lining, wear],
+  )
+  const web = useMemo(() => arcPlate(r - 0.26, r - 0.02, start + 0.1, start + span - 0.1, 0.045), [r, span, start])
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh geometry={table} castShadow>
+        <Mat k="steel" />
+      </mesh>
+      <mesh geometry={friction}>
+        <Mat k="friction" />
+      </mesh>
+      <mesh geometry={web}>
+        <Mat k="steel" />
+      </mesh>
+    </group>
+  )
+}
+
+export function WheelCylinder({ position, rotation }: { position?: V3; rotation?: V3 }) {
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh rotation={[0, 0, HALF]}>
+        <cylinderGeometry args={[0.1, 0.1, 0.42, 24]} />
+        <Mat k="castIron" />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <group key={s}>
+          <mesh position={[s * 0.25, 0, 0]} rotation={[0, 0, HALF]}>
+            <cylinderGeometry args={[0.062, 0.062, 0.1, 18]} />
+            <Mat k="machined" />
+          </mesh>
+          <mesh position={[s * 0.2, 0, 0]} rotation={[0, 0, HALF]}>
+            <coneGeometry args={[0.095, 0.1, 18]} />
+            <Mat k="rubber" />
+          </mesh>
+        </group>
+      ))}
+      {/* bleeder screw out the back */}
+      <mesh position={[0, 0.02, -0.14]} rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[0.026, 0.026, 0.16, 12]} />
+        <Mat k="brass" />
+      </mesh>
+    </group>
+  )
+}
+
+/** Extension spring stretched between two points. */
+export function TensionSpring({
+  from,
+  to,
+  coils = 14,
+  r = 0.045,
+  wire = 0.018,
+  mat = 'spring',
+}: {
+  from: V3
+  to: V3
+  coils?: number
+  r?: number
+  wire?: number
+  mat?: MatKey
+}) {
+  const { geo, mid, quat } = useMemo(() => {
+    const a = new THREE.Vector3(...from)
+    const b = new THREE.Vector3(...to)
+    const len = a.distanceTo(b)
+    const g = helixTube(r, len * 0.84, coils, wire)
+    const q = new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      b.clone().sub(a).normalize(),
+    )
+    return { geo: g, mid: a.clone().add(b).multiplyScalar(0.5), quat: q }
+  }, [from, to, coils, r, wire])
+
+  return (
+    <group position={mid.toArray()} quaternion={quat}>
+      <mesh geometry={geo}>
+        <Mat k={mat} />
+      </mesh>
+      {/* hook ends */}
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[0, s * 0.46, 0]}>
+          <torusGeometry args={[r * 0.9, wire / 2, 8, 16, Math.PI * 1.4]} />
+          <Mat k={mat} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+/** Star-wheel adjuster: threaded strut with a toothed wheel. */
+export function StarAdjuster({ len = 0.42, position, rotation }: { len?: number; position?: V3; rotation?: V3 }) {
+  const star = useMemo(() => sprocket(0.065, 14, 0.022, 0.05, 0.02), [])
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh rotation={[0, 0, HALF]}>
+        <cylinderGeometry args={[0.03, 0.03, len, 14]} />
+        <Mat k="machined" />
+      </mesh>
+      <mesh geometry={star} rotation={[0, HALF, 0]}>
+        <Mat k="blackOxide" />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[(s * len) / 2, 0, 0]}>
+          <boxGeometry args={[0.09, 0.1, 0.07]} />
+          <Mat k="steel" />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+export function HoldDownPin({ position }: { position?: V3 }) {
+  return (
+    <group position={position}>
+      <mesh rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[0.016, 0.016, 0.4, 10]} />
+        <Mat k="steel" />
+      </mesh>
+      <mesh position={[0, 0, 0.16]} rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[0.065, 0.065, 0.035, 16]} />
+        <Mat k="zinc" />
+      </mesh>
+      <mesh position={[0, 0, 0.1]}>
+        <cylinderGeometry args={[0.05, 0.05, 0.09, 14]} />
+        <Mat k="spring" />
+      </mesh>
+    </group>
+  )
+}
+
+/* ============================================================== cooling */
+
+export function Radiator({
+  w = 2.6,
+  h = 1.5,
+  position,
+  rotation,
+}: {
+  w?: number
+  h?: number
+  position?: V3
+  rotation?: V3
+}) {
+  const core = useMemo(() => radiatorCore(w, h * 0.78, 0.16, 28), [w, h])
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh geometry={core} castShadow receiveShadow>
+        <Mat k="aluminium" color="#596069" />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[0, (s * h) / 2.3, 0]}>
+          <boxGeometry args={[w, h * 0.12, 0.22]} />
+          <Mat k="plastic" color="#1d2024" />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+export function Thermostat({ position, rotation }: { position?: V3; rotation?: V3 }) {
+  return (
+    <group position={position} rotation={rotation}>
+      {/* valve plate */}
+      <mesh>
+        <cylinderGeometry args={[0.17, 0.17, 0.03, 28]} />
+        <Mat k="machined" />
+      </mesh>
+      {/* wax element */}
+      <mesh position={[0, -0.1, 0]}>
+        <cylinderGeometry args={[0.075, 0.09, 0.18, 20]} />
+        <Mat k="copper" />
+      </mesh>
+      {/* bias spring */}
+      <mesh position={[0, 0.1, 0]}>
+        <cylinderGeometry args={[0.1, 0.1, 0.16, 18, 1, true]} />
+        <Mat k="spring" side={THREE.DoubleSide} />
+      </mesh>
+      {/* jiggle pin */}
+      <mesh position={[0.11, 0.02, 0]}>
+        <cylinderGeometry args={[0.018, 0.018, 0.05, 10]} />
+        <Mat k="brass" />
+      </mesh>
+    </group>
+  )
+}
+
+export function HoseClamp({ r = 0.1, position, rotation }: { r?: number; position?: V3; rotation?: V3 }) {
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh rotation={[0, 0, HALF]}>
+        <torusGeometry args={[r, 0.016, 8, 26]} />
+        <Mat k="zinc" />
+      </mesh>
+      <mesh position={[0, r + 0.03, 0]}>
+        <boxGeometry args={[0.07, 0.07, 0.07]} />
+        <Mat k="zinc" />
+      </mesh>
+    </group>
+  )
+}
+
+/* ============================================================== CV axle */
+
+/** Rzeppa outer joint — the bell that bolts into the hub. */
+export function CVOuterJoint({ position, rotation }: { position?: V3; rotation?: V3 }) {
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh rotation={[0, 0, HALF]}>
+        <sphereGeometry args={[0.26, 26, 18, 0, Math.PI * 2, 0, Math.PI * 0.62]} />
+        <Mat k="machined" />
+      </mesh>
+      <mesh position={[0.1, 0, 0]} rotation={[0, 0, HALF]}>
+        <cylinderGeometry args={[0.24, 0.2, 0.2, 26]} />
+        <Mat k="steel" />
+      </mesh>
+      {/* splined stub that passes through the hub */}
+      <mesh position={[0.34, 0, 0]} rotation={[0, 0, HALF]}>
+        <cylinderGeometry args={[0.1, 0.1, 0.44, 22]} />
+        <Mat k="machined" />
+      </mesh>
+    </group>
+  )
+}
+
+/** Tripod inner joint — the housing that slides in the transmission. */
+export function CVInnerJoint({ position, rotation }: { position?: V3; rotation?: V3 }) {
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh rotation={[0, 0, HALF]}>
+        <cylinderGeometry args={[0.25, 0.25, 0.4, 28]} />
+        <Mat k="steel" />
+      </mesh>
+      <mesh position={[-0.22, 0, 0]} rotation={[0, 0, HALF]}>
+        <cylinderGeometry args={[0.16, 0.16, 0.16, 22]} />
+        <Mat k="machined" />
+      </mesh>
+      {/* the three roller trunnions */}
+      {[0, 1, 2].map((i) => {
+        const a = (i / 3) * Math.PI * 2
+        return (
+          <mesh key={i} position={[0.06, Math.cos(a) * 0.17, Math.sin(a) * 0.17]} rotation={[0, 0, HALF]}>
+            <cylinderGeometry args={[0.055, 0.055, 0.13, 16]} />
+            <Mat k="machined" />
+          </mesh>
+        )
+      })}
+    </group>
+  )
+}
+
+export function CVBoot({
+  rStart = 0.24,
+  rEnd = 0.1,
+  length = 0.5,
+  position,
+  rotation,
+}: {
+  rStart?: number
+  rEnd?: number
+  length?: number
+  position?: V3
+  rotation?: V3
+}) {
+  const geo = useMemo(() => bellows(rStart, rEnd, length, 5, 0.035), [rStart, rEnd, length])
+  return (
+    <mesh geometry={geo} position={position} rotation={rotation}>
+      <Mat k="rubber" side={THREE.DoubleSide} />
+    </mesh>
+  )
+}
+
+export function BootClamp({ r = 0.13, position, rotation }: { r?: number; position?: V3; rotation?: V3 }) {
+  return (
+    <mesh position={position} rotation={rotation}>
+      <torusGeometry args={[r, 0.018, 8, 24]} />
+      <Mat k="zinc" />
+    </mesh>
+  )
+}
+
+/* ==================================================== accessory drive */
+
+/** Generic belt-driven accessory: a body behind its pulley. */
+export function Accessory({
+  w = 0.5,
+  h = 0.44,
+  d = 0.5,
+  label,
+  position,
+  mat = 'aluminium',
+}: {
+  w?: number
+  h?: number
+  d?: number
+  label?: string
+  position?: V3
+  mat?: MatKey
+}) {
+  return (
+    <group position={position} name={label}>
+      <mesh position={[0, 0, -d / 2 - 0.12]} castShadow>
+        <boxGeometry args={[w, h, d]} />
+        <Mat k={mat} />
+      </mesh>
+      <mesh position={[0, 0, -d - 0.14]} rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[h * 0.44, h * 0.44, 0.1, 22]} />
+        <Mat k={mat} />
+      </mesh>
+    </group>
+  )
+}
+
+/** Smooth multi-rib belt — same path solver as the timing belt, no teeth. */
+export function SerpentineBelt({
+  pulleys,
+  width = 0.24,
+  thickness = 0.05,
+}: {
+  pulleys: PulleyNode[]
+  width?: number
+  thickness?: number
+}) {
+  const geo = useMemo(() => {
+    const path = beltPath(pulleys, 16)
+    return beltGeometry(path, width, thickness, 0.05, 0)
+  }, [pulleys, width, thickness])
+  return (
+    <mesh geometry={geo} castShadow>
+      <Mat k="belt" />
     </mesh>
   )
 }

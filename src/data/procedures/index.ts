@@ -8,13 +8,25 @@ import { silveradoTransService } from './silveradoTransService'
 import { civicDoorPanel } from './civicDoorPanel'
 import { civicBumperCover } from './civicBumperCover'
 import { oilService } from './oilService'
+import { corollaDrumBrakes } from './corollaDrumBrakes'
+import { camryCooling } from './camryCooling'
+import { silveradoSerpentine } from './silveradoSerpentine'
+import { civicCvAxle } from './civicCvAxle'
 
+/**
+ * Ordered by how much it costs you to get it wrong, which is also roughly the
+ * order a first-year student meets them.
+ */
 export const PROCEDURES: Procedure[] = [
   oilService,
-  civicFrontBrakes,
+  silveradoSerpentine,
   civicDoorPanel,
   civicBumperCover,
+  civicFrontBrakes,
+  corollaDrumBrakes,
+  camryCooling,
   silveradoTransService,
+  civicCvAxle,
   civicFrontStrut,
   camryCylinderHead,
   accordTimingBelt,
