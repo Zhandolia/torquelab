@@ -12,6 +12,9 @@ import { corollaDrumBrakes } from './corollaDrumBrakes'
 import { camryCooling } from './camryCooling'
 import { silveradoSerpentine } from './silveradoSerpentine'
 import { civicCvAxle } from './civicCvAxle'
+import { camryRearBrakes } from './camryRearBrakes'
+import { silveradoHubBearing } from './silveradoHubBearing'
+import { mustangSparkPlugs } from './mustangSparkPlugs'
 
 /**
  * Ordered by how much it costs you to get it wrong, which is also roughly the
@@ -22,11 +25,14 @@ export const PROCEDURES: Procedure[] = [
   silveradoSerpentine,
   civicDoorPanel,
   civicBumperCover,
+  mustangSparkPlugs,
   civicFrontBrakes,
   corollaDrumBrakes,
+  camryRearBrakes,
   camryCooling,
   silveradoTransService,
   civicCvAxle,
+  silveradoHubBearing,
   civicFrontStrut,
   camryCylinderHead,
   accordTimingBelt,

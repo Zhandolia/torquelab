@@ -45,8 +45,14 @@ export const LEVELS: Level[] = [
     ase: 'Pre-ASE / Shop readiness',
     accent: '#4ade80',
     outcome:
-      'You can lift a car safely, tell a single-use fastener from a reusable one, read a torque spec and understand why it is that number, and take plastic trim off without breaking it.',
-    procedureIds: ['oil-and-filter', 'silverado-serpentine-belt', 'civic-door-panel', 'civic-bumper-cover'],
+      'You can lift a car safely, tell a single-use fastener from a reusable one, read a torque spec and understand why it is that number, take plastic trim off without breaking it, and put a steel fastener into an aluminium casting without stripping it.',
+    procedureIds: [
+      'oil-and-filter',
+      'silverado-serpentine-belt',
+      'civic-door-panel',
+      'civic-bumper-cover',
+      'mustang-spark-plugs',
+    ],
     passMark: 75,
     questions: [
       {
@@ -253,6 +259,83 @@ export const LEVELS: Level[] = [
           },
         ],
       },
+      {
+        id: 'f9',
+        draws: 'Spark Plugs & Coil-on-Plug Ignition',
+        prompt: 'Why are spark plugs pulled from a cold engine rather than a warm one?',
+        options: [
+          {
+            text: 'Aluminium expands about twice as much as the steel plug shell, so a hot head grips the threads harder and is far more likely to lose them',
+            correct: true,
+            why:
+              'Differential thermal expansion is the entire reason. Cold, the aluminium has shrunk back off the steel shell and the plug comes out against carbon alone.',
+          },
+          {
+            text: 'The deposits on a warm plug read differently, so the diagnosis would be wrong',
+            why: 'Deposits do not change in the minutes after shutdown. Thread damage is the risk.',
+          },
+          {
+            text: 'A warm cylinder holds residual pressure that can eject the plug',
+            why: 'A stationary engine holds no pressure.',
+          },
+          {
+            text: 'Cold threads accept anti-seize better',
+            why: 'Most plugs go in dry, and surface temperature is not what makes a thread grip.',
+          },
+        ],
+      },
+      {
+        id: 'f10',
+        draws: 'Spark Plugs & Coil-on-Plug Ignition',
+        prompt:
+          'A plug is coated with anti-seize and then tightened to its published 18 N·m. What has happened to the joint?',
+        options: [
+          {
+            text: 'It is over-tightened, because the lubricant removed most of the thread friction the torque figure assumes',
+            correct: true,
+            why:
+              'Torque is mostly spent on friction. Lubricate the threads and the same wrench reading delivers far more clamp load — which is how a plug "torqued to spec" strips an aluminium head.',
+          },
+          {
+            text: 'It is under-tightened, because the lubricant lets it work back out',
+            why: 'Nothing about a lubricated thread backs a plug out under a static clamp load.',
+          },
+          {
+            text: 'It is correct, because published plug torques already assume anti-seize',
+            why: 'They assume the plating the plug shipped with and no added lubricant. The box says so.',
+          },
+          {
+            text: 'Clamp load is unchanged; only next time’s removal torque is affected',
+            why: 'Removal does get easier, but the installation clamp load changed the moment friction dropped.',
+          },
+        ],
+      },
+      {
+        id: 'f11',
+        draws: 'Spark Plugs / Oil & Filter / Serpentine Belt',
+        prompt:
+          'Across this level, what single idea explains a 2 N·m trim screw, a 7 N·m coil bolt, an 18 N·m spark plug and a 50 N·m tensioner bolt?',
+        options: [
+          {
+            text: 'The specification is set by what the joint has to resist and what the weaker material can survive, not by the size of the fastener',
+            correct: true,
+            why:
+              'That is the thread running through every procedure in this level. Plastic, aluminium and steel all fail at different loads, and the spec is written for the weakest member of the joint.',
+          },
+          {
+            text: 'Smaller fasteners always get proportionally lower torque',
+            why: 'Diameter matters, but it does not explain why two bolts of the same size in different materials get different figures.',
+          },
+          {
+            text: 'Torque figures are manufacturer convention and the real requirement is simply "tight"',
+            why: 'They are calculated clamp loads. "Tight" is how trim cracks and heads strip.',
+          },
+          {
+            text: 'Lower figures are used wherever a fastener is reused and higher ones where it is new',
+            why: 'Reuse affects torque-to-yield fasteners specifically, not the general relationship.',
+          },
+        ],
+      },
     ],
   },
 
@@ -265,8 +348,8 @@ export const LEVELS: Level[] = [
     ase: 'ASE A5',
     accent: '#ffb000',
     outcome:
-      'You can service a disc corner and a drum corner, measure everything that decides whether parts get replaced, and explain why a pulsating pedal is almost never "warped rotors".',
-    procedureIds: ['civic-front-brakes', 'corolla-drum-brakes'],
+      'You can service a front disc corner, a drum corner and a rear disc corner with a parking brake built into the caliper, measure everything that decides whether parts get replaced, and explain why a pulsating pedal is almost never "warped rotors".',
+    procedureIds: ['civic-front-brakes', 'corolla-drum-brakes', 'camry-rear-brakes'],
     passMark: 75,
     questions: [
       {
@@ -474,6 +557,84 @@ export const LEVELS: Level[] = [
           },
         ],
       },
+      {
+        id: 'b9',
+        draws: 'Rear Disc Brake Service',
+        prompt:
+          'A rear caliper with the parking brake built into it has a piston that will not retract under a C-clamp. Why not?',
+        options: [
+          {
+            text: 'It sits on a threaded adjuster that the parking brake lever rotates, so it only retracts by being turned',
+            correct: true,
+            why:
+              'The screw applies the parking brake and self-adjusts for pad wear. Pressing axially drives the piston against its own thread and ruins the adjuster, the seal, or both.',
+          },
+          {
+            text: 'The rear hydraulic circuit holds a residual pressure that resists it',
+            why: 'Rear circuit pressure is lower than the front, and the reservoir accepts displaced fluid either way.',
+          },
+          {
+            text: 'The dust boot is bonded to the piston and locks it in place',
+            why: 'The boot seals; it carries no axial load.',
+          },
+          {
+            text: 'It needs the bleeder opened first to let fluid escape',
+            why: 'Opening the bleeder lets air in and commits you to a bleed. The mechanism, not the hydraulics, is the obstacle here.',
+          },
+        ],
+      },
+      {
+        id: 'b10',
+        draws: 'Rear Disc Brake Service',
+        prompt:
+          'Front rotors on a car are internally vented and the rears are solid. What is the engineering reason?',
+        options: [
+          {
+            text: 'Weight transfers forward under braking, so the rear axle converts far less energy into heat and needs much less cooling capacity',
+            correct: true,
+            why:
+              'The front axle does roughly two thirds to three quarters of the work, so it needs vanes to pump air through the disc. A solid rear is sized to its real thermal load.',
+          },
+          {
+            text: 'Rear rotors turn more slowly, so vanes would not move air',
+            why: 'All four turn at the same wheel speed in a straight line.',
+          },
+          {
+            text: 'A vented rotor cannot accommodate a parking brake mechanism',
+            why: 'Plenty of cars pair vented rear rotors with exactly this caliper design.',
+          },
+          {
+            text: 'Solid rotors are stiffer, so they resist runout better',
+            why: 'A vented rotor is the stiffer structure of the two. Heat is what decides this.',
+          },
+        ],
+      },
+      {
+        id: 'b11',
+        draws: 'Rear Disc Brake Service',
+        prompt:
+          'After a rear pad change the parking brake feels like it pulls a long way before it holds. What do you do first?',
+        options: [
+          {
+            text: 'Pump the brake pedal firm, then apply and release the parking brake several times to let the caliper self-adjusters run out',
+            correct: true,
+            why:
+              'The ballscrew is wound fully in from the pad change. Cycling the brake is what walks it out to its new working position. Only if the travel is still long after that does the cable come into it.',
+          },
+          {
+            text: 'Tighten the cable adjuster until the travel feels right',
+            why: 'Do this before cycling the adjusters and the brakes drag permanently once the adjusters catch up.',
+          },
+          {
+            text: 'Bleed the rear circuit',
+            why: 'The parking brake is mechanical. Air in the hydraulic circuit cannot lengthen its travel.',
+          },
+          {
+            text: 'Replace the cable, since long travel means it has stretched',
+            why: 'Possible eventually, but not the first thing to check on a brake you have just rebuilt.',
+          },
+        ],
+      },
     ],
   },
 
@@ -486,8 +647,13 @@ export const LEVELS: Level[] = [
     ase: 'ASE A2 / A3 / A4',
     accent: '#35e0c8',
     outcome:
-      'You can handle a compressed coil spring without being injured by it, torque suspension fasteners so the bushings survive, diagnose a CV joint by its noise, and follow a fluid procedure that has a temperature spec rather than a dipstick.',
-    procedureIds: ['civic-front-strut', 'civic-cv-axle', 'silverado-trans-service'],
+      'You can handle a compressed coil spring without being injured by it, torque suspension fasteners so the bushings survive, confirm a wheel bearing fault by measurement instead of by ear, diagnose a CV joint by its noise, and follow a fluid procedure that has a temperature spec rather than a dipstick.',
+    procedureIds: [
+      'civic-front-strut',
+      'civic-cv-axle',
+      'silverado-hub-bearing',
+      'silverado-trans-service',
+    ],
     passMark: 75,
     questions: [
       {
@@ -689,6 +855,84 @@ export const LEVELS: Level[] = [
           {
             text: 'Because the scan tool cannot read level below 35 °C',
             why: 'The scan tool reports temperature; it does not measure level at all.',
+          },
+        ],
+      },
+      {
+        id: 'c9',
+        draws: 'Front Hub Bearing Replacement',
+        prompt:
+          'A truck growls at 60 km/h. Hub flange play measures 0.05 mm against a 0.13 mm limit and the hub spins smoothly by hand. What now?',
+        options: [
+          {
+            text: 'Look elsewhere — most likely the tyres. The bearing is within spec and nothing measured points at it',
+            correct: true,
+            why:
+              'Cupped or worn tyres produce exactly this noise and are the most common misdiagnosis of a wheel bearing. Measurement beats listening, which is the whole reason the measurement comes first.',
+          },
+          {
+            text: 'Replace the hub anyway — play is not a reliable test',
+            why: 'Play plus a load test plus a spin test is a reliable test. Fitting parts on a hunch is how a repair becomes two repairs.',
+          },
+          {
+            text: 'Replace the hub on the opposite side, since noise travels',
+            why: 'Noise does mislead, which is precisely why you measure both sides rather than guess at one.',
+          },
+          {
+            text: 'Tighten the axle nut beyond spec to take up the play',
+            why: 'The bearing is preloaded at the factory. Over-torquing the axle nut destroys it rather than adjusting it.',
+          },
+        ],
+      },
+      {
+        id: 'c10',
+        draws: 'Front Hub Bearing Replacement',
+        prompt:
+          'A new hub unit needs the three mounting bolts to pull it the last few millimetres into the knuckle bore. What is the consequence?',
+        options: [
+          {
+            text: 'Scale in the bore is holding it out of square, which pre-loads the bearing off-axis and will fail it early',
+            correct: true,
+            why:
+              'A sealed bearing is built to run square. Clamp it at an angle and the original noise comes back within a few thousand miles, on a part that was perfectly good when you fitted it.',
+          },
+          {
+            text: 'Nothing, provided the bolts reach their full 180 N·m',
+            why: 'They will reach torque. Reaching torque on a crooked hub is how the failure is created.',
+          },
+          {
+            text: 'The bearing will be too tight to turn and set an ABS fault',
+            why: 'It still spins freely. The damage is to internal preload, not to rotation.',
+          },
+          {
+            text: 'The axle splines will not engage',
+            why: 'Spline engagement is independent of how tightly the barrel fits its bore.',
+          },
+        ],
+      },
+      {
+        id: 'c11',
+        draws: 'Front Hub Bearing / CV Axle',
+        prompt:
+          'Both of these jobs warn against driving a half-shaft through a hub with an air hammer. What is the specific damage?',
+        options: [
+          {
+            text: 'Impact loads pass through the bearing balls and dent the races — brinelling — which becomes a noise the new part did not have',
+            correct: true,
+            why:
+              'The load path from the shaft to the knuckle runs through the bearing. A hammer blow is a huge instantaneous load on a tiny contact patch, and the dent it leaves is permanent.',
+          },
+          {
+            text: 'It twists the splines on the shaft',
+            why: 'Axial blows do not apply torque. The bearing is what is in the load path.',
+          },
+          {
+            text: 'It cracks the ABS ring moulded into the seal',
+            why: 'Possible as collateral damage, but the race damage is the reason the warning exists.',
+          },
+          {
+            text: 'It stretches the axle nut threads',
+            why: 'The nut is off by this point in either procedure.',
           },
         ],
       },

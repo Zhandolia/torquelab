@@ -51,10 +51,11 @@ src/
     context.ts        ViewerCtx + PartStateCtx
     Part.tsx          Named sub-assembly: explode, highlight, ghost, hit-test, anchor
     parts.tsx         Reusable mechanical primitives (Bolt, Rotor, Caliper, Piston…)
-    assemblies/       Nine complete assemblies, composed from parts.tsx
+    assemblies/       Sixteen complete assemblies, composed from parts.tsx
     Viewer.tsx        Canvas, lights, camera tween, explode driver, callouts
   components/         UI atoms, toolbar, part inspector, quiz
-  pages/              Home, Garage, VehicleDetail, Library, Bench, Runner
+  pages/              Home, Garage, VehicleDetail, Library, Bench, Runner,
+                      Path, Exam
 ```
 
 ### The three ideas that make it work
@@ -108,9 +109,9 @@ assessment that draws across its procedures and tests reasoning rather than
 recall.
 
 ```
-1  Shop Foundations    Pre-ASE      4 procedures,  8 questions, pass 75%
-2  Brake Systems       ASE A5       2 procedures,  8 questions, pass 75%
-3  Chassis & Driveline ASE A2/A3/A4 3 procedures,  8 questions, pass 75%
+1  Shop Foundations    Pre-ASE      5 procedures, 11 questions, pass 75%
+2  Brake Systems       ASE A5       3 procedures, 11 questions, pass 75%
+3  Chassis & Driveline ASE A2/A3/A4 4 procedures, 11 questions, pass 75%
 4  Engine Mechanical   ASE A1       4 procedures, 10 questions, pass 80%
 ```
 
@@ -159,10 +160,11 @@ assembly stays full-colour and let the hotspots do the labelling.
 
 ## Content status
 
-Thirteen procedures across thirteen assemblies on six training platforms,
-covering every system category the app defines: brakes (disc and drum),
-suspension and steering, engine mechanical, valve timing, transmission and
-driveline, cooling, interior trim, exterior body and core maintenance.
+Sixteen procedures across sixteen assemblies on six training platforms,
+covering every system category the app defines: brakes (front disc, drum, and
+rear disc with an integrated parking brake), suspension, steering and wheel
+bearings, engine mechanical, valve timing, transmission and driveline, cooling,
+interior trim, exterior body and core maintenance including ignition.
 
 Two things in the 3D are deliberate simplifications worth knowing about:
 

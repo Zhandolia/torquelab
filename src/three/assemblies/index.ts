@@ -12,10 +12,16 @@ import { DrumBrake } from './DrumBrake'
 import { CoolingSystem } from './CoolingSystem'
 import { SerpentineDrive } from './SerpentineDrive'
 import { CVAxle } from './CVAxle'
+import { BrakeRear } from './BrakeRear'
+import { HubUnit } from './HubUnit'
+import { Ignition } from './Ignition'
 
 export const ASSEMBLIES: Record<string, ComponentType> = {
   brakeFront: BrakeFront,
+  brakeRear: BrakeRear,
   drumBrake: DrumBrake,
+  hubUnit: HubUnit,
+  ignition: Ignition,
   strutFront: StrutFront,
   timingV6: TimingV6,
   cylinderHead: CylinderHeadAssembly,
@@ -44,6 +50,9 @@ export const DEFAULT_CAM: Record<string, { pos: [number, number, number]; target
   coolingSystem: { pos: [3.4, 1.8, 5.6], target: [0, 0.1, 0.3] },
   serpentineDrive: { pos: [1.6, 1.0, 6.6], target: [0, 0.1, 0] },
   cvAxle: { pos: [2.0, 2.2, 5.4], target: [0, 0, 0] },
+  brakeRear: { pos: [3.4, 1.8, 4.3], target: [-0.3, 0.15, 0] },
+  hubUnit: { pos: [3.9, 1.9, 4.8], target: [-0.2, 0, 0] },
+  ignition: { pos: [2.4, 3.0, 6.4], target: [0, 0.1, 0.1] },
 }
 
 export { HEAD_BOLTS } from './CylinderHead'

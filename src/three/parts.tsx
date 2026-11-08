@@ -1640,6 +1640,283 @@ export function Accessory({
   )
 }
 
+/* ===================================================== rear disc brakes */
+
+/**
+ * Rear caliper piston. The two slots across its face are what a cube tool
+ * engages — the detail that tells you this piston has to be *wound* back in
+ * against its self-adjuster, not pressed like a front one. Axis +Z.
+ */
+export function ScrewPiston({
+  bore = 0.34,
+  position,
+  rotation,
+}: {
+  bore?: number
+  position?: V3
+  rotation?: V3
+}) {
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh rotation={[HALF, 0, 0]} castShadow>
+        <cylinderGeometry args={[bore / 2, bore / 2, 0.22, 30]} />
+        <Mat k="machined" />
+      </mesh>
+      {/* the cross slots the cube tool drives */}
+      {[0, HALF].map((a) => (
+        <mesh key={a} position={[0, 0, 0.105]} rotation={[0, 0, a]}>
+          <boxGeometry args={[bore * 0.8, 0.034, 0.05]} />
+          <Mat k="blackOxide" />
+        </mesh>
+      ))}
+      {/* dust boot folded over the back of the piston */}
+      <mesh position={[0, 0, -0.1]} rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[bore / 2 + 0.035, bore / 2 + 0.035, 0.09, 26]} />
+        <Mat k="rubber" />
+      </mesh>
+      {/* the adjuster screw the piston rides on, inside the bore */}
+      <mesh position={[0, 0, -0.2]} rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[0.05, 0.05, 0.2, 16]} />
+        <Mat k="steel" />
+      </mesh>
+    </group>
+  )
+}
+
+/** Cable-operated parking brake lever on the back of a rear caliper. */
+export function ParkingLever({ position, rotation }: { position?: V3; rotation?: V3 }) {
+  return (
+    <group position={position} rotation={rotation}>
+      {/* pivot shaft through the caliper casting */}
+      <mesh rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[0.055, 0.055, 0.22, 18]} />
+        <Mat k="machined" />
+      </mesh>
+      {/* lever arm */}
+      <mesh position={[0, 0.17, 0]} castShadow>
+        <boxGeometry args={[0.08, 0.38, 0.11]} />
+        <Mat k="steel" />
+      </mesh>
+      {/* return spring wrapped round the pivot */}
+      <mesh position={[0, 0, -0.1]} rotation={[0, 0, 0]}>
+        <torusGeometry args={[0.085, 0.015, 8, 22, Math.PI * 1.5]} />
+        <Mat k="spring" />
+      </mesh>
+      {/* cable clevis at the top of the arm */}
+      <mesh position={[0, 0.37, 0]}>
+        <boxGeometry args={[0.07, 0.11, 0.17]} />
+        <Mat k="zinc" />
+      </mesh>
+    </group>
+  )
+}
+
+/* ====================================================== hub / bearing */
+
+/**
+ * Bolt-on hub bearing cartridge: a sealed double-row bearing with the wheel
+ * flange on one face and three mounting ears that bolt through the knuckle
+ * from behind. Not serviceable — it is replaced as a unit.
+ */
+export function HubCartridge({
+  flangeOd = 0.86,
+  studs = 6,
+  studDist = 0.31,
+  position,
+  rotation,
+}: {
+  flangeOd?: number
+  studs?: number
+  studDist?: number
+  position?: V3
+  rotation?: V3
+}) {
+  const flange = useMemo(
+    () => discWithHoles(flangeOd, 0.34, 0.1, [{ r: 0.042, count: studs, dist: studDist }]),
+    [flangeOd, studs, studDist],
+  )
+  const ears = useMemo(
+    () => discWithHoles(1.04, 0.62, 0.1, [{ r: 0.05, count: 3, dist: 0.4, offset: Math.PI / 6 }]),
+    [],
+  )
+  return (
+    <group position={position} rotation={rotation}>
+      {/* wheel mounting flange */}
+      <mesh geometry={flange} castShadow>
+        <Mat k="machined" />
+      </mesh>
+      {/* bearing barrel that sits in the knuckle bore */}
+      <mesh position={[0, 0, -0.17]} rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[0.3, 0.3, 0.26, 30]} />
+        <Mat k="steel" />
+      </mesh>
+      {/* mounting ear plate, clamped against the back of the knuckle */}
+      <mesh geometry={ears} position={[0, 0, -0.31]}>
+        <Mat k="steel" />
+      </mesh>
+      {/* outboard seal */}
+      <mesh position={[0, 0, -0.06]} rotation={[HALF, 0, 0]}>
+        <torusGeometry args={[0.305, 0.03, 10, 32]} />
+        <Mat k="rubber" />
+      </mesh>
+      {/* splined bore the axle passes through */}
+      <mesh rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[0.17, 0.17, 0.52, 24, 1, true]} />
+        <Mat k="machined" side={THREE.DoubleSide} />
+      </mesh>
+      {Array.from({ length: studs }, (_, i) => {
+        const a = (i / studs) * Math.PI * 2
+        return (
+          <Stud
+            key={i}
+            d={0.066}
+            len={0.28}
+            position={[Math.cos(a) * studDist, Math.sin(a) * studDist, 0.13]}
+          />
+        )
+      })}
+    </group>
+  )
+}
+
+/** ABS wheel speed sensor that drops into a bore in the hub flange. */
+export function WheelSpeedSensor({ position, rotation }: { position?: V3; rotation?: V3 }) {
+  return (
+    <group position={position} rotation={rotation}>
+      {/* sensor pin down the bore */}
+      <mesh rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[0.038, 0.038, 0.32, 18]} />
+        <Mat k="plastic" />
+      </mesh>
+      {/* mounting tab with its single bolt hole */}
+      <mesh position={[0.1, 0, -0.15]}>
+        <boxGeometry args={[0.2, 0.1, 0.05]} />
+        <Mat k="plastic" />
+      </mesh>
+      {/* pigtail up to the connector */}
+      <mesh position={[0.04, 0.14, -0.17]} rotation={[0, 0, 0.26]}>
+        <cylinderGeometry args={[0.022, 0.022, 0.34, 12]} />
+        <Mat k="rubber" />
+      </mesh>
+      <Connector position={[0.14, 0.34, -0.17]} rotation={[0, 0, 0.4]} />
+    </group>
+  )
+}
+
+/** Splined half-shaft stub with a threaded nose for the axle nut. Axis +Z. */
+export function AxleStub({ len = 1.3, position }: { len?: number; position?: V3 }) {
+  return (
+    <group position={position}>
+      <mesh rotation={[HALF, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.155, 0.155, len, 26]} />
+        <Mat k="machined" />
+      </mesh>
+      {/* spline flutes over the length that engages the hub */}
+      {Array.from({ length: 24 }, (_, i) => {
+        const a = (i / 24) * Math.PI * 2
+        return (
+          <mesh
+            key={i}
+            position={[Math.cos(a) * 0.162, Math.sin(a) * 0.162, len * 0.24]}
+            rotation={[0, 0, a]}
+          >
+            <boxGeometry args={[0.018, 0.016, len * 0.42]} />
+            <Mat k="machined" />
+          </mesh>
+        )
+      })}
+      {/* threaded nose */}
+      <mesh position={[0, 0, len / 2 + 0.11]} rotation={[HALF, 0, 0]}>
+        <cylinderGeometry args={[0.128, 0.128, 0.24, 22]} />
+        <Mat k="machined" />
+      </mesh>
+    </group>
+  )
+}
+
+/* ============================================================ ignition */
+
+/** Spark plug, nose down −Y, origin on the seat face. */
+export function SparkPlug({ position, rotation }: { position?: V3; rotation?: V3 }) {
+  const hex = useMemo(() => hexPrism(0.172, 0.14), [])
+  return (
+    <group position={position} rotation={rotation}>
+      {/* threaded nose into the head */}
+      <mesh position={[0, -0.15, 0]}>
+        <cylinderGeometry args={[0.07, 0.07, 0.3, 20]} />
+        <Mat k="zinc" />
+      </mesh>
+      {/* centre electrode and ground strap, across the gap */}
+      <mesh position={[0, -0.33, 0]}>
+        <cylinderGeometry args={[0.009, 0.009, 0.1, 10]} />
+        <Mat k="machined" />
+      </mesh>
+      <mesh position={[0, -0.33, 0.042]}>
+        <boxGeometry args={[0.028, 0.075, 0.022]} />
+        <Mat k="machined" />
+      </mesh>
+      {/* gasket / sealing washer */}
+      <mesh position={[0, 0.006, 0]}>
+        <cylinderGeometry args={[0.086, 0.086, 0.016, 20]} />
+        <Mat k="zinc" />
+      </mesh>
+      {/* hex — the only place a socket should ever load the plug */}
+      <mesh geometry={hex} position={[0, 0.082, 0]} castShadow>
+        <Mat k="zinc" />
+      </mesh>
+      {/* ceramic insulator with its rain ribs */}
+      <mesh position={[0, 0.31, 0]}>
+        <cylinderGeometry args={[0.055, 0.072, 0.32, 22]} />
+        <Mat k="plastic" color="#d9d5cc" />
+      </mesh>
+      {[0.26, 0.35, 0.43].map((y) => (
+        <mesh key={y} position={[0, y, 0]} rotation={[HALF, 0, 0]}>
+          <torusGeometry args={[0.062, 0.015, 8, 22]} />
+          <Mat k="plastic" color="#d9d5cc" />
+        </mesh>
+      ))}
+      {/* terminal the coil spring contacts */}
+      <mesh position={[0, 0.5, 0]}>
+        <cylinderGeometry args={[0.03, 0.03, 0.08, 14]} />
+        <Mat k="machined" />
+      </mesh>
+    </group>
+  )
+}
+
+/** Coil-on-plug ignition coil. Boot runs down −Y, origin on the cover face. */
+export function IgnitionCoil({ position, rotation }: { position?: V3; rotation?: V3 }) {
+  return (
+    <group position={position} rotation={rotation}>
+      {/* coil body */}
+      <mesh position={[0, 0.22, 0]} castShadow>
+        <boxGeometry args={[0.21, 0.36, 0.27]} />
+        <Mat k="plastic" />
+      </mesh>
+      {/* mounting flange with its single bolt */}
+      <mesh position={[0.18, 0.09, 0]}>
+        <boxGeometry args={[0.2, 0.07, 0.17]} />
+        <Mat k="plastic" />
+      </mesh>
+      {/* primary connector socket the harness plugs into */}
+      <mesh position={[-0.16, 0.32, 0]}>
+        <boxGeometry args={[0.13, 0.13, 0.15]} />
+        <Mat k="plastic" color="#1b2b3a" />
+      </mesh>
+      {/* rubber boot down the plug well */}
+      <mesh position={[0, -0.15, 0]}>
+        <cylinderGeometry args={[0.078, 0.098, 0.38, 22, 1, true]} />
+        <Mat k="rubber" side={THREE.DoubleSide} />
+      </mesh>
+      {/* spring contact inside the boot */}
+      <mesh position={[0, -0.31, 0]}>
+        <cylinderGeometry args={[0.026, 0.026, 0.14, 12, 1, true]} />
+        <Mat k="spring" side={THREE.DoubleSide} />
+      </mesh>
+    </group>
+  )
+}
+
 /** Smooth multi-rib belt — same path solver as the timing belt, no teeth. */
 export function SerpentineBelt({
   pulleys,
