@@ -15,6 +15,7 @@ import { Chip, SectionTitle, SpecNotice, fmtDuration } from '../components/ui'
 import { procById } from '../data/procedures'
 import { prepFor } from '../data/prep'
 import { stepMinutes, stepNumber } from '../lib/jobsheet'
+import { FLOOR, purchasesFor } from '../lib/kit'
 
 const HERO: { id: string; label: string; hidden: string[] }[] = [
   {
@@ -337,6 +338,9 @@ export function Home() {
         </Link>
       </div>
 
+      {/* ------------------------------------------------------ the tool kit */}
+      <TheKit />
+
       {/* ------------------------------------------------------ at the car */}
       <AtTheCar />
 
@@ -385,6 +389,56 @@ export function Home() {
       <div className="mt-10">
         <SpecNotice />
       </div>
+    </div>
+  )
+}
+
+/**
+ * The barrier that comes before any of the learning: not knowing what to buy,
+ * and being quietly certain it is more than you can afford.
+ */
+function TheKit() {
+  return (
+    <div className="mt-16">
+      <SectionTitle sub="Across these sixteen procedures the tool lists run to 187 entries written 153 different ways, which reads like a trade career's worth of equipment. Collapsed to what you would actually buy, it is 93 things — and only 57 of them can ever stop you starting a job.">
+        What you need to own
+      </SectionTitle>
+      <Link
+        to="/kit"
+        className="group grid gap-5 rounded-xl border border-shop-800 bg-shop-900/30 p-5 transition-colors hover:border-amber-caution/40 hover:bg-shop-850/60 lg:grid-cols-[1fr_1.15fr] lg:items-center"
+      >
+        <div>
+          <p className="text-[13.5px] leading-relaxed text-shop-300">
+            Eleven different torque wrenches appear in these procedures, from 5–25 N·m to 60–300 N·m. That is not
+            eleven wrenches — it is three, and every figure in the platform falls inside one of them. Tick what
+            you already own and the page works out which jobs that lets you start, and which single purchase
+            would open up the most work next.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {['Buying order', 'What you can do today', 'Hire, do not buy', 'No invented prices'].map((t) => (
+              <span key={t} className="rounded border border-shop-700 bg-shop-850 px-2.5 py-1 text-[12px] text-shop-300">
+                {t}
+              </span>
+            ))}
+          </div>
+          <span className="mt-4 inline-block text-[13.5px] font-medium text-amber-caution">
+            Open the tool kit →
+          </span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { n: FLOOR, l: 'purchases before the first job is possible', c: 'text-amber-caution' },
+            { n: purchasesFor(8), l: 'to reach eight of the sixteen', c: 'text-torque' },
+            { n: purchasesFor(PROCEDURES.length), l: 'to reach all sixteen', c: 'text-shop-100' },
+          ].map((s) => (
+            <div key={s.l} className="rounded-lg border border-shop-800 bg-shop-950 px-3 py-4">
+              <div className={`tnum font-mono text-[28px] leading-none font-bold ${s.c}`}>{s.n}</div>
+              <div className="mt-1.5 text-[11.5px] leading-snug text-shop-500">{s.l}</div>
+            </div>
+          ))}
+        </div>
+      </Link>
     </div>
   )
 }

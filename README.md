@@ -318,6 +318,71 @@ grey where there is not — so an open paints the colour change exactly onto the
 broken element. Explore mode lets you choose the fault; diagnose mode hides it
 behind a customer complaint and asks you to name it.
 
+## The tool kit
+
+`/kit` — the barrier that comes before any of the learning. Not skill: not
+knowing what to buy, and being quietly certain it is more than you can afford.
+
+Across the sixteen procedures the tool lists run to **187 entries written 153
+different ways**, because each procedure names its tools the way that step needs
+them. Read end to end that looks like a trade career's worth of equipment. The
+clearest case is torque wrenches — eleven distinct strings appear, from
+`5–25 N·m` to `60–300 N·m`. That is not eleven wrenches. It is three, and every
+torque figure in the platform falls inside one of them.
+
+`data/toolkit.ts` holds a canonical catalogue (93 real purchases) and an
+**explicit** string-to-tool mapping. Explicit, not pattern-matched, on purpose:
+`Floor jack + 2 jack stands` is two purchases,
+`Serpentine belt tool or long 1/2" breaker bar` is a choice between two, and a
+regex that nearly matched would silently drop a tool from somebody's shopping
+list with nothing to show for it. A dev guard fails loudly on any unmapped
+string, any mapping to an id that no longer exists, and any catalogue entry no
+procedure asks for.
+
+### Gating, and why it matters
+
+Tools carry `gating` (default true). It is false for the things you improvise or
+already own — a rag, a blanket, a torch, a paint pen, your phone.
+
+This is not cosmetic. The first version of the buying ladder required *every*
+listed tool, and the result was nonsense: the sixteenth job unlocked on the
+purchase of a **paint pen**, and the ninth on a **phone camera** that the
+catalogue itself describes as "you already own it". Nobody is blocked from a
+brake job by not owning a paint pen. Counting those as blockers attributes each
+job to whichever trivial item happened to be bought last instead of to the tool
+that was really in the way.
+
+With gating applied, every unlock is a real gate: oil filter wrench, nylon trim
+tools, dead-blow hammer, caliper compressor, wind-back tool, spark plug socket,
+brake adjusting spoon, snap ring pliers.
+
+### The ladder
+
+`lib/kit.ts` runs a greedy set cover ranked on three keys in order: how many
+jobs this purchase finishes, whether it can ever block a job at all, then how
+many jobs are waiting on it. The middle key keeps the torch and the parts trays
+— both genuinely common — from being bought ahead of what is actually in the
+way. Greedy is not optimal and does not need to be; the honest claim is "this
+order works well", not "no order is better".
+
+What it computes:
+
+| | |
+|---|---|
+| **10** | purchases before any job at all is possible |
+| **33** | purchases to reach eight of the sixteen |
+| **57** | purchases to reach all sixteen — the last 9 block nothing |
+
+That first number is the one nothing else on the platform says. You cannot
+half-do a job, so there is a floor to clear before the first thing is
+achievable, and it is higher than it feels standing in a shop holding one socket
+set. Knowing it up front is worth more than discovering it at purchase three.
+
+There are **no prices**, deliberately. What a socket set costs depends on the
+country, the brand and the year, and a number invented to fill a column would be
+worse than none. The ordering question is the one the data can answer honestly,
+and that answer does not go stale.
+
 ## The job sheet
 
 `/sheet/:id` — the page you take outside. Everything else here is for learning
@@ -391,7 +456,9 @@ step a `durationMin`, or the job sheet's time figure quietly becomes a
 lower bound. Then add a matching entry to `data/prep.ts` — without one the
 procedure still works everywhere else but its job sheet loses its planning
 panel, which is the one section that is not derivable from anything. The dev
-guard in `prep.ts` will tell you in the console if you forget.
+guard in `prep.ts` will tell you in the console if you forget. If the procedure
+names a tool no existing one does, add it to `RAW_TO_CANON` in
+`data/toolkit.ts` too — the guard in `lib/kit.ts` will name the exact string.
 
 **Add an assembly** — create `src/three/assemblies/MyThing.tsx`, compose it from
 `three/parts.tsx` (add new primitives there if needed), register it in

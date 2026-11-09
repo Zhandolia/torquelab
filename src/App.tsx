@@ -13,6 +13,7 @@ import { Torque } from './pages/Torque'
 import { Safety } from './pages/Safety'
 import { Electrical } from './pages/Electrical'
 import { Sheet } from './pages/Sheet'
+import { Kit } from './pages/Kit'
 
 function ScrollTop() {
   const { pathname } = useLocation()
@@ -70,6 +71,7 @@ export default function App() {
             <Route path="/bench" element={<Bench />} />
             <Route path="/procedure/:id" element={<Runner />} />
             <Route path="/sheet/:id" element={<Sheet />} />
+            <Route path="/kit" element={<Kit />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

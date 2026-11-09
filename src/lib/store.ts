@@ -59,6 +59,8 @@ interface State {
    * a shopping trip mark a procedure complete.
    */
   sheet: Record<string, string[]>
+  /** Canonical tool ids the learner says they already own. */
+  ownedTools: string[]
   toggleStep: (proc: string, step: string) => void
   completeStep: (proc: string, step: string) => void
   answerQuiz: (proc: string, cp: string, idx: number) => void
@@ -75,6 +77,8 @@ interface State {
   setLearnerName: (name: string) => void
   toggleTick: (proc: string, key: string) => void
   clearTicks: (proc: string) => void
+  toggleTool: (id: string) => void
+  setOwnedTools: (ids: string[]) => void
 }
 
 const blank = (): ProcProgress => ({ steps: [], quiz: {}, startedAt: Date.now() })
@@ -91,6 +95,7 @@ export const useStore = create<State>()(
       drills: {},
       learnerName: '',
       sheet: {},
+      ownedTools: [],
 
       toggleStep: (proc, step) =>
         set((s) => {
@@ -217,6 +222,15 @@ export const useStore = create<State>()(
           delete next[proc]
           return { sheet: next }
         }),
+
+      toggleTool: (id) =>
+        set((s) => ({
+          ownedTools: s.ownedTools.includes(id)
+            ? s.ownedTools.filter((t) => t !== id)
+            : [...s.ownedTools, id],
+        })),
+
+      setOwnedTools: (ids) => set({ ownedTools: [...new Set(ids)] }),
     }),
     { name: 'torquelab.v1' },
   ),

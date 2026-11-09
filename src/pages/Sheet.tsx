@@ -224,6 +224,10 @@ export function Sheet() {
         <Link to="/library" className="text-[13px] text-shop-400 hover:text-shop-200">
           All procedures
         </Link>
+        <span className="text-[13px] text-shop-600">·</span>
+        <Link to="/kit" className="text-[13px] text-shop-400 hover:text-shop-200">
+          Which of these tools you already own
+        </Link>
         <div className="ml-auto flex items-center gap-2">
           {done > 0 && (
             <button
