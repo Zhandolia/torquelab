@@ -318,12 +318,80 @@ grey where there is not — so an open paints the colour change exactly onto the
 broken element. Explore mode lets you choose the fault; diagnose mode hides it
 behind a customer complaint and asks you to name it.
 
+## The job sheet
+
+`/sheet/:id` — the page you take outside. Everything else here is for learning
+the job at a desk, where a dark screen and a 3D model are exactly right. This is
+the other half of the problem: standing in a driveway with the bonnet up, sun on
+the phone, hands too dirty to scrub a model around.
+
+Which is why it is the one light page in a dark app. A dark page on a phone
+outdoors is a mirror and on paper it is a cartridge. It prints (`@media print`
+in `index.css` drops the chrome, keeps the amber and red flags via
+`print-color-adjust`, and holds sections, rows and list items whole across page
+breaks) and it carries **both torque units on every line**, because at the car
+there is nobody to ask and no toggle worth fumbling for.
+
+Everything on it is derived in `lib/jobsheet.ts` rather than written a second
+time — a torque figure that disagrees with itself in two places on the same
+platform is worse than none. The torque table is annotated with the step numbers
+where each fastener is tightened; anything a step calls for that the procedure's
+own table omits is still listed, flagged `step only`, so a gap in the data shows
+up on the sheet instead of hiding there.
+
+### Two times, and why they differ
+
+The sheet prints a **shop flat rate** and a **your first time**, and on fourteen
+of the sixteen procedures they disagree. That is not a bug in either number —
+they answer different questions. `timeMin` is what a shop would quote somebody
+who has done the job before and is not stopping to learn anything. `stepMinutes`
+sums the procedure's own step durations, which include reading the step, looking
+at the model, taking the measurement and answering the checkpoint.
+
+On the Silverado hub bearing the gap is 120 minutes against 185 — **54% more**.
+Printing only the smaller figure is how somebody starts a safety-critical job at
+four in the afternoon and finishes it in the dark, so the sheet prints both and
+says which is which. All 172 steps carry a duration, so the larger figure is a
+complete sum and not an extrapolation.
+
+### What a step list cannot tell you
+
+`data/prep.ts` is the only hand-written part, and it exists because a shop never
+has to ask these questions. A shop has a second bay, a parts runner, a lift the
+car can sit on for a week and somebody else's car to drive home in. An
+enthusiast has one car, one Saturday and a driveway:
+
+1. **From which step can the car no longer move under its own power?**
+2. **Which step is the point of no return** — where going back costs more than
+   going forward?
+3. **Can I stop halfway and come back tomorrow?** (`yes` / `risky` / `no` —
+   the strut is `no`, because nobody leaves a spring compressed overnight.)
+4. **What must already be in my hands before I start?**
+
+The commitment bar draws the whole job as one strip of steps: grey while you
+could still put the tools down and drive it, amber once you are finishing it,
+hatched where the car cannot move. The hatch is an overlay on either colour, not
+a third state, and the legend says so — a car can be immobile while you could
+still bolt it back together.
+
+`commitStep` and `immobileFrom` point at step ids, which rot whenever a
+procedure gains or loses a step, so `prep.ts` validates itself in development
+and logs to the console. Writing this file from memory produced three wrong
+procedure ids and twelve wrong step ids on the first attempt — each procedure
+numbers its steps with its own prefix (`o1`, `b1`, `d1`, `t1`, …), not `s1` —
+and the guard found all fifteen before the page was ever opened.
+
 ## Extending it
 
 **Add a procedure** — create `src/data/procedures/myProcedure.ts` exporting a
 `Procedure`, then add it to the array in `procedures/index.ts`. If it reuses an
 existing assembly you are done; the part ids in `focus`, `hotspots` and
-`hiddenByStep` must match that assembly's `<Part id="…">` values.
+`hiddenByStep` must match that assembly's `<Part id="…">` values. Give every
+step a `durationMin`, or the job sheet's time figure quietly becomes a
+lower bound. Then add a matching entry to `data/prep.ts` — without one the
+procedure still works everywhere else but its job sheet loses its planning
+panel, which is the one section that is not derivable from anything. The dev
+guard in `prep.ts` will tell you in the console if you forget.
 
 **Add an assembly** — create `src/three/assemblies/MyThing.tsx`, compose it from
 `three/parts.tsx` (add new primitives there if needed), register it in

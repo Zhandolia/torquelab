@@ -7,6 +7,7 @@ import { useStore } from '../lib/store'
 import { checkpointOptions, levelStatuses, programProgress } from '../lib/path'
 import { bayProgress, caseStatuses, money } from '../lib/diagnose'
 import { INSTRUMENTS } from '../data/instruments'
+import { stepMinutes } from '../lib/jobsheet'
 import { Chip, Difficulty, fmtDuration, ProgressRing, SectionTitle, SpecNotice } from '../components/ui'
 
 type Sort = 'suggested' | 'easiest' | 'hardest' | 'shortest'
@@ -98,12 +99,14 @@ export function Library() {
           const pr = progress[p.id]
           const pct = pr ? Math.round((pr.steps.length / p.steps.length) * 100) : 0
           return (
-            <Link
+            /* The card is a container rather than one big link, because the
+               footer carries a second destination: the job sheet you take to
+               the car. Nesting that inside the card link would be invalid. */
+            <div
               key={p.id}
-              to={`/procedure/${p.id}`}
               className="group flex flex-col rounded-xl border border-shop-800 bg-shop-900/30 p-4 transition-colors hover:border-amber-caution/40 hover:bg-shop-850/60"
             >
-              <div className="flex items-start gap-3">
+              <Link to={`/procedure/${p.id}`} className="flex items-start gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="font-mono text-[10px] tracking-widest text-amber-caution uppercase">
                     {SYSTEMS[p.system].label}
@@ -119,18 +122,34 @@ export function Library() {
                     </span>
                   </div>
                 )}
-              </div>
+              </Link>
 
-              <p className="mt-3 line-clamp-3 flex-1 text-[12.5px] leading-relaxed text-shop-400">{p.summary}</p>
+              <Link
+                to={`/procedure/${p.id}`}
+                className="mt-3 line-clamp-3 flex-1 text-[12.5px] leading-relaxed text-shop-400"
+              >
+                {p.summary}
+              </Link>
 
               <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-shop-800 pt-3">
                 <Chip>{v.year} {v.make} {v.model}</Chip>
                 <Difficulty level={p.difficulty} />
                 <span className="ml-auto font-mono text-[11px] text-shop-500">
-                  {p.steps.length} steps · {fmtDuration(p.timeMin)}
+                  {p.steps.length} steps · {fmtDuration(stepMinutes(p))}
                 </span>
               </div>
-            </Link>
+
+              <Link
+                to={`/sheet/${p.id}`}
+                className="mt-2 inline-flex items-center gap-1.5 self-start font-mono text-[10.5px] tracking-widest text-shop-500 uppercase transition-colors hover:text-torque"
+              >
+                <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden>
+                  <rect x="1.5" y="0.5" width="9" height="11" rx="1" fill="none" stroke="currentColor" />
+                  <path d="M3.5 3.5h5M3.5 6h5M3.5 8.5h3" stroke="currentColor" strokeWidth="0.9" />
+                </svg>
+                Job sheet
+              </Link>
+            </div>
           )
         })}
       </div>

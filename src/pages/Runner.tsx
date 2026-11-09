@@ -143,7 +143,17 @@ export function Runner() {
           })}
         </ol>
 
-        <div className="border-t border-shop-800 p-3">
+        <div className="space-y-2 border-t border-shop-800 p-3">
+          <Link
+            to={`/sheet/${proc.id}`}
+            className="flex items-center justify-center gap-1.5 rounded border border-torque/40 bg-torque/[0.07] px-2 py-1.5 font-mono text-[10px] tracking-wider text-torque uppercase transition-colors hover:bg-torque/15"
+          >
+            <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden>
+              <rect x="1.5" y="0.5" width="9" height="11" rx="1" fill="none" stroke="currentColor" />
+              <path d="M3.5 3.5h5M3.5 6h5M3.5 8.5h3" stroke="currentColor" strokeWidth="0.9" />
+            </svg>
+            Job sheet
+          </Link>
           <button
             onClick={() => {
               resetProc(proc.id)

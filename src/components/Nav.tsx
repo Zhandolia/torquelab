@@ -43,7 +43,10 @@ export function Nav() {
   const done = PROCEDURES.filter((p) => progress[p.id]?.completedAt).length
 
   return (
-    <header className="sticky top-0 z-40 border-b border-shop-800 bg-shop-950/85 backdrop-blur-md">
+    <header
+      data-print-hide
+      className="sticky top-0 z-40 border-b border-shop-800 bg-shop-950/85 backdrop-blur-md"
+    >
       <div className="mx-auto flex h-14 max-w-[1500px] items-center gap-2 px-3 sm:gap-6 sm:px-5">
         <Link to="/" className="flex shrink-0 items-center gap-2">
           <Mark />

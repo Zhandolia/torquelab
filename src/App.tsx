@@ -12,6 +12,7 @@ import { Measure } from './pages/Measure'
 import { Torque } from './pages/Torque'
 import { Safety } from './pages/Safety'
 import { Electrical } from './pages/Electrical'
+import { Sheet } from './pages/Sheet'
 
 function ScrollTop() {
   const { pathname } = useLocation()
@@ -25,6 +26,8 @@ function Footer() {
   const { pathname } = useLocation()
   if (pathname.startsWith('/procedure/')) return null
   if (/^\/diagnose\/.+/.test(pathname)) return null
+  // The job sheet carries its own notice, in its own typeface, and prints.
+  if (pathname.startsWith('/sheet/')) return null
   return (
     <footer className="mt-16 border-t border-shop-800 px-5 py-8">
       <div className="mx-auto max-w-[1500px] text-[11.5px] leading-relaxed text-shop-600">
@@ -66,6 +69,7 @@ export default function App() {
             <Route path="/library" element={<Library />} />
             <Route path="/bench" element={<Bench />} />
             <Route path="/procedure/:id" element={<Runner />} />
+            <Route path="/sheet/:id" element={<Sheet />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

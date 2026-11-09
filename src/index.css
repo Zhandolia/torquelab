@@ -141,3 +141,54 @@ canvas {
   display: block;
   touch-action: none;
 }
+
+/* ---- print ----------------------------------------------------------------
+ * Only one page in this platform is meant to leave the screen: the job sheet.
+ * Everything here exists so that sheet lands on paper as a shop document
+ * rather than as a screenshot of a website — no navigation, no shadows, no
+ * dark background eating a cartridge, and no section torn across a page break
+ * in the middle of a torque table.
+ */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  /* The app chrome is for navigating, and paper does not navigate. */
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  html,
+  body,
+  #root {
+    height: auto !important;
+    background: #fff !important;
+  }
+  body {
+    color: #000 !important;
+    overscroll-behavior: auto;
+  }
+
+  /* The sheet is already white; on paper it should not also be a floating card. */
+  [data-sheet] {
+    max-width: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* A torque row or a hazard split across two pages is how a number gets
+     misread, so sections and rows stay whole wherever they fit. */
+  [data-sheet-section],
+  tr,
+  li {
+    break-inside: avoid;
+  }
+
+  /* Keep the amber and red flags: they are the difference between a figure you
+     can repeat and a bolt you only get one go at. */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

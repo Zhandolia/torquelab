@@ -51,6 +51,14 @@ interface State {
   diagnostics: Record<string, DiagResult>
   drills: Record<string, DrillResult>
   learnerName: string
+  /**
+   * Job sheet tick boxes, per procedure: tools collected, parts bought, steps
+   * done at the car. Kept apart from `progress`, which records what you have
+   * *learned*. Ticking a tool off a shopping list is not the same claim as
+   * having worked through the step in the viewer, and merging the two would let
+   * a shopping trip mark a procedure complete.
+   */
+  sheet: Record<string, string[]>
   toggleStep: (proc: string, step: string) => void
   completeStep: (proc: string, step: string) => void
   answerQuiz: (proc: string, cp: string, idx: number) => void
@@ -65,6 +73,8 @@ interface State {
   clearDiagnosis: (caseId: string) => void
   recordReading: (instrument: string, right: boolean, streak: number) => void
   setLearnerName: (name: string) => void
+  toggleTick: (proc: string, key: string) => void
+  clearTicks: (proc: string) => void
 }
 
 const blank = (): ProcProgress => ({ steps: [], quiz: {}, startedAt: Date.now() })
@@ -80,6 +90,7 @@ export const useStore = create<State>()(
       diagnostics: {},
       drills: {},
       learnerName: '',
+      sheet: {},
 
       toggleStep: (proc, step) =>
         set((s) => {
@@ -188,6 +199,24 @@ export const useStore = create<State>()(
         }),
 
       setLearnerName: (name) => set({ learnerName: name.slice(0, 60) }),
+
+      toggleTick: (proc, key) =>
+        set((s) => {
+          const cur = s.sheet[proc] ?? []
+          return {
+            sheet: {
+              ...s.sheet,
+              [proc]: cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key],
+            },
+          }
+        }),
+
+      clearTicks: (proc) =>
+        set((s) => {
+          const next = { ...s.sheet }
+          delete next[proc]
+          return { sheet: next }
+        }),
     }),
     { name: 'torquelab.v1' },
   ),

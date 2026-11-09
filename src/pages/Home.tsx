@@ -11,7 +11,10 @@ import { Micrometer } from '../components/instruments'
 import { GRADES } from '../data/fasteners'
 import { BoltHead } from '../components/fastenerViz'
 import { SYSTEMS, type SystemId } from '../lib/types'
-import { Chip, SectionTitle, SpecNotice } from '../components/ui'
+import { Chip, SectionTitle, SpecNotice, fmtDuration } from '../components/ui'
+import { procById } from '../data/procedures'
+import { prepFor } from '../data/prep'
+import { stepMinutes, stepNumber } from '../lib/jobsheet'
 
 const HERO: { id: string; label: string; hidden: string[] }[] = [
   {
@@ -334,6 +337,9 @@ export function Home() {
         </Link>
       </div>
 
+      {/* ------------------------------------------------------ at the car */}
+      <AtTheCar />
+
       {/* -------------------------------------------------- diagnostic bay */}
       <div className="mt-16">
         <SectionTitle sub="Procedures teach you how to do the job. The bay teaches you whether it is the job — the half of trade school that nobody films.">
@@ -379,6 +385,102 @@ export function Home() {
       <div className="mt-10">
         <SpecNotice />
       </div>
+    </div>
+  )
+}
+
+/**
+ * Everything above this point is for learning the job at a desk. This is the
+ * other half: the page you take outside, where the question is no longer "how
+ * does this work" but "can I still drive this to work on Monday".
+ *
+ * The example is the hub bearing because it has the widest gap in the whole
+ * platform between the flat rate and what following the procedure properly
+ * actually costs — and that gap is the thing a driveway mechanic gets wrong.
+ */
+function AtTheCar() {
+  const proc = procById('silverado-hub-bearing')!
+  const prep = prepFor(proc.id)!
+  const mins = stepMinutes(proc)
+  const commitAt = stepNumber(proc, prep.commitStep)
+  const immobileAt = prep.immobileFrom ? stepNumber(proc, prep.immobileFrom) : 0
+
+  return (
+    <div className="mt-16">
+      <SectionTitle sub="A procedure is read at a desk and performed in a driveway. The job sheet is the part that goes outside with you: light enough to read in sunlight, printable, and honest about how long the job really takes and when you stop being able to change your mind.">
+        Taking it to the car
+      </SectionTitle>
+      <Link
+        to={`/sheet/${proc.id}`}
+        className="group grid gap-5 rounded-xl border border-shop-800 bg-shop-900/30 p-5 transition-colors hover:border-amber-caution/40 hover:bg-shop-850/60 lg:grid-cols-[1fr_1.15fr] lg:items-center"
+      >
+        <div>
+          <p className="text-[13.5px] leading-relaxed text-shop-300">
+            Every tool, part, torque figure and measurement limit for one job, collected onto a single page with
+            tick boxes and both units on every line. Plus the four things a step list cannot tell you: which step
+            the car stops being driveable at, which one you cannot turn back from, whether you can stop halfway,
+            and the one tool there is no substitute for.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {['Point of no return', 'Both units, always', 'Tickable at the car', 'Prints on paper'].map((t) => (
+              <span key={t} className="rounded border border-shop-700 bg-shop-850 px-2.5 py-1 text-[12px] text-shop-300">
+                {t}
+              </span>
+            ))}
+          </div>
+          <span className="mt-4 inline-block text-[13.5px] font-medium text-amber-caution">
+            Open a job sheet →
+          </span>
+        </div>
+
+        <div className="rounded-lg border border-shop-800 bg-white px-4 py-4 text-neutral-900">
+          <p className="font-mono text-[9.5px] font-bold tracking-[0.2em] text-neutral-500 uppercase">
+            TorqueLab · job sheet
+          </p>
+          <p className="mt-0.5 text-[15px] leading-tight font-bold">{proc.title}</p>
+
+          <div className="mt-3 flex gap-3">
+            <div className="flex-1 rounded border border-neutral-300 px-2 py-1.5">
+              <p className="font-mono text-[8.5px] font-bold tracking-widest text-neutral-500 uppercase">
+                Shop flat rate
+              </p>
+              <p className="text-[17px] leading-tight font-bold tabular-nums">{fmtDuration(proc.timeMin)}</p>
+            </div>
+            <div className="flex-1 rounded border-2 border-neutral-900 px-2 py-1.5">
+              <p className="font-mono text-[8.5px] font-bold tracking-widest text-neutral-700 uppercase">
+                Your first time
+              </p>
+              <p className="text-[17px] leading-tight font-bold tabular-nums">{fmtDuration(mins)}</p>
+            </div>
+          </div>
+
+          <div className="mt-3 flex gap-[2px]">
+            {Array.from({ length: proc.steps.length }, (_, i) => {
+              const n = i + 1
+              const committed = n >= commitAt
+              const immobile = immobileAt > 0 && n >= immobileAt
+              return (
+                <div
+                  key={n}
+                  className={`h-4 flex-1 rounded-[2px] ${committed ? 'bg-amber-500' : 'bg-neutral-300'}`}
+                  style={
+                    immobile
+                      ? {
+                          backgroundImage: committed
+                            ? 'repeating-linear-gradient(45deg,#f59e0b 0 3px,#b45309 3px 6px)'
+                            : 'repeating-linear-gradient(45deg,#d4d4d4 0 3px,#a3a3a3 3px 6px)',
+                        }
+                      : undefined
+                  }
+                />
+              )
+            })}
+          </div>
+          <p className="mt-1.5 font-mono text-[9.5px] tracking-widest text-neutral-500 uppercase">
+            point of no return · step {commitAt} of {proc.steps.length}
+          </p>
+        </div>
+      </Link>
     </div>
   )
 }
