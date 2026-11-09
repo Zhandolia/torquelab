@@ -55,7 +55,8 @@ src/
     Viewer.tsx        Canvas, lights, camera tween, explode driver, callouts
   components/         UI atoms, toolbar, part inspector, quiz
   pages/              Home, Garage, VehicleDetail, Library, Bench, Runner,
-                      Path, Exam, Diagnose, Measure, Torque, Safety
+                      Path, Exam, Diagnose, Measure, Torque, Safety,
+                      Electrical
 ```
 
 ### The three ideas that make it work
@@ -280,6 +281,42 @@ looking at it is the skill.
 
 None of it replaces the lift-point diagram in the vehicle's own handbook, and
 the drawing says so on its face.
+
+---
+
+## The electrical bench
+
+The platform maps itself onto the ASE certification areas and was missing one:
+**A6, electrical and electronic systems.** That is where most modern faults
+live and the area self-taught mechanics are worst at, because a wiring diagram
+tells you nothing about where to put the probes.
+
+`src/lib/circuit.ts` solves one series loop — battery, feed, fuse, switch,
+lamp, ground — from the element resistances, every time anything changes.
+**Nothing the meter displays is written down anywhere.** That matters: it keeps
+the numbers honest when somebody probes a pair of points nobody anticipated,
+and it means the teaching moments are consequences rather than assertions.
+
+Healthy, the loop carries 6.09 A, drops 0.23 V on the supply side and 0.07 V on
+the ground side. Drop a corroded ground stud into it and the same solver gives
+you the lesson for free:
+
+```
+voltage drop across the stud, under load   6.52 V   (limit 0.2 V)
+continuity across the same stud            2.21 Ω   — and it beeps
+```
+
+That is the trap the whole page exists for. A continuity test proves a path
+exists, not that it can carry current. Put an open fuse in instead and you get
+the other classic signature: 12.60 V on the feed side, 0.00 V on the other,
+12.60 V straight across the fuse, 0.00 A everywhere — because with no current
+there is no drop anywhere, so the step between two adjacent probes *is* the
+fault.
+
+The schematic colours itself from the solution — amber where there is voltage,
+grey where there is not — so an open paints the colour change exactly onto the
+broken element. Explore mode lets you choose the fault; diagnose mode hides it
+behind a customer complaint and asks you to name it.
 
 ## Extending it
 

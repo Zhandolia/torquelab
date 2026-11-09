@@ -11,6 +11,7 @@ const LINKS = [
   { to: '/diagnose', label: 'Diagnose' },
   { to: '/measure', label: 'Measure' },
   { to: '/torque', label: 'Torque' },
+  { to: '/electrical', label: 'Electrical' },
   { to: '/bench', label: 'Bench' },
 ]
 

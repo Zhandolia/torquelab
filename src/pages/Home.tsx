@@ -236,7 +236,7 @@ export function Home() {
 
       {/* ------------------------------------------------------ shop skills */}
       <div className="mt-16">
-        <SectionTitle sub="The two things every procedure here quietly assumes you can already do: read an instrument to a hundredth of a millimetre, and understand what a torque figure is actually buying.">
+        <SectionTitle sub="The things every procedure here quietly assumes you can already do: read an instrument to a hundredth of a millimetre, understand what a torque figure is actually buying, and find a fault with a meter.">
           Shop skills
         </SectionTitle>
         <Link
@@ -298,6 +298,38 @@ export function Home() {
                 <div className="font-mono text-[10.5px] text-shop-500">{g.proofMPa} MPa</div>
               </div>
             ))}
+          </div>
+        </Link>
+
+        <Link
+          to="/electrical"
+          className="group mt-3 grid gap-5 rounded-xl border border-shop-800 bg-shop-900/30 p-5 transition-colors hover:border-amber-caution/40 hover:bg-shop-850/60 lg:grid-cols-[1fr_1.15fr] lg:items-center"
+        >
+          <div>
+            <p className="text-[13.5px] leading-relaxed text-shop-300">
+              A wiring diagram tells you nothing about where to put the probes. This is one lamp circuit, solved
+              properly, with faults you can drop into it and a meter you can move around — so you can watch a
+              corroded ground beep happily on a continuity test while it eats six and a half volts under load.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {['Voltage drop', 'Continuity traps', 'Finding an open', 'Hidden-fault drill'].map((t) => (
+                <span key={t} className="rounded border border-shop-700 bg-shop-850 px-2.5 py-1 text-[12px] text-shop-300">
+                  {t}
+                </span>
+              ))}
+            </div>
+            <span className="mt-4 inline-block text-[13.5px] font-medium text-amber-caution">
+              Open the electrical bench →
+            </span>
+          </div>
+          <div className="rounded-lg border-2 border-shop-700 bg-[#121b14] px-5 py-6">
+            <div className="flex items-baseline justify-end gap-2">
+              <span className="tnum font-mono text-[34px] leading-none font-bold text-[#7dffb0]">6.52</span>
+              <span className="font-mono text-[15px] text-[#7dffb0]/70">V</span>
+            </div>
+            <div className="mt-2 text-right font-mono text-[10px] tracking-widest text-[#7dffb0]/50 uppercase">
+              across a ground stud that passes a continuity test
+            </div>
           </div>
         </Link>
       </div>

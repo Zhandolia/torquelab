@@ -11,6 +11,7 @@ import { DiagnosticBay, DiagnosticCase } from './pages/Diagnose'
 import { Measure } from './pages/Measure'
 import { Torque } from './pages/Torque'
 import { Safety } from './pages/Safety'
+import { Electrical } from './pages/Electrical'
 
 function ScrollTop() {
   const { pathname } = useLocation()
@@ -59,6 +60,7 @@ export default function App() {
             <Route path="/safety" element={<Safety />} />
             <Route path="/measure" element={<Measure />} />
             <Route path="/torque" element={<Torque />} />
+            <Route path="/electrical" element={<Electrical />} />
             <Route path="/diagnose" element={<DiagnosticBay />} />
             <Route path="/diagnose/:id" element={<DiagnosticCase />} />
             <Route path="/library" element={<Library />} />
