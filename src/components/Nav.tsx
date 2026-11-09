@@ -5,6 +5,7 @@ import { UnitToggle } from './ui'
 
 const LINKS = [
   { to: '/path', label: 'Path' },
+  { to: '/safety', label: 'Safety' },
   { to: '/garage', label: 'Garage' },
   { to: '/library', label: 'Procedures' },
   { to: '/diagnose', label: 'Diagnose' },

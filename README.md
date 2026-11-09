@@ -55,7 +55,7 @@ src/
     Viewer.tsx        Canvas, lights, camera tween, explode driver, callouts
   components/         UI atoms, toolbar, part inspector, quiz
   pages/              Home, Garage, VehicleDetail, Library, Bench, Runner,
-                      Path, Exam, Diagnose, Measure, Torque
+                      Path, Exam, Diagnose, Measure, Torque, Safety
 ```
 
 ### The three ideas that make it work
@@ -247,6 +247,39 @@ sorted by how hard the joint is clamped.
 
 Numbers here are a teaching model, not an engineering calculation, and the page
 says so where it shows them.
+
+---
+
+## The safety brief
+
+Every procedure carries a hazard strip, and a strip only ever tells you the
+conclusion. It says "crush / falling load" and moves on. That is the right
+thing for a procedure to do and the wrong thing for the platform to leave it
+at, because the audience this was built for is somebody on their own, on a
+driveway, with a trolley jack and no lift and nobody to find them.
+
+`src/data/safety.ts` and `/safety` cover lifting and supporting, stored energy,
+and the long version of all nine hazard kinds — each cross-linked to the
+procedures that actually declare it, computed from their own `hazards` arrays.
+
+The lift diagram is a side view of a unibody car with ten points people really
+do put jacks and stands on, three of them rated and seven of them not. Explore
+mode colours them and explains each one; drill mode asks you to pick every
+point you would put a stand under.
+
+One detail in there is deliberate and worth keeping. When the drill is checked,
+the points go back to being coloured by **what the point actually is**, not by
+whether you got it right — with your choices marked by dashed rings instead.
+Scoring colour would paint an untouched bumper beam green for "correctly left
+alone", and on a safety diagram green reads as *safe to use*. The diagram is
+never allowed to say something about the car that is not true.
+
+Structural members are drawn visibly heavier than pressed sheet, which does
+hint at the answer. That is on purpose: telling structure from sheet metal by
+looking at it is the skill.
+
+None of it replaces the lift-point diagram in the vehicle's own handbook, and
+the drawing says so on its face.
 
 ## Extending it
 

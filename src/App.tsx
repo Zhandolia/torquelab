@@ -10,6 +10,7 @@ import { Exam } from './pages/Exam'
 import { DiagnosticBay, DiagnosticCase } from './pages/Diagnose'
 import { Measure } from './pages/Measure'
 import { Torque } from './pages/Torque'
+import { Safety } from './pages/Safety'
 
 function ScrollTop() {
   const { pathname } = useLocation()
@@ -55,6 +56,7 @@ export default function App() {
             <Route path="/path/:levelId/exam" element={<Exam />} />
             <Route path="/garage" element={<Garage />} />
             <Route path="/vehicle/:id" element={<VehicleDetail />} />
+            <Route path="/safety" element={<Safety />} />
             <Route path="/measure" element={<Measure />} />
             <Route path="/torque" element={<Torque />} />
             <Route path="/diagnose" element={<DiagnosticBay />} />

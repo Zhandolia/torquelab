@@ -117,6 +117,19 @@ export function Home() {
             </Link>
           </div>
 
+          <Link
+            to="/safety"
+            className="hatch mt-4 flex items-center gap-3 rounded-md border border-amber-caution/35 px-4 py-2.5 transition-colors hover:border-amber-caution/70"
+          >
+            <span className="text-[15px]" aria-hidden>
+              ⬛
+            </span>
+            <span className="text-[13px] leading-snug text-shop-200">
+              <span className="font-semibold text-amber-caution">Read the safety brief first.</span> Lift points,
+              stored energy, and the things that hurt people working alone on a driveway. →
+            </span>
+          </Link>
+
           <div className="mt-7 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
             <Stat n={String(PROCEDURES.length)} label="Full procedures" />
             <Stat n={String(totalSteps)} label="Guided steps" />
